@@ -17,7 +17,7 @@ type (
 // NewAPI comment pending
 func NewAPI() API {
 	api := API{&facebookLib.Session{}, ""}
-	api.Session.Version = FACEBOOK_API_VERSION
+	api.Session.Version = facebookAPIVersion
 	return api
 }
 
