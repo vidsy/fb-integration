@@ -1,0 +1,3 @@
+package: github.com/vidsy/fb-integration
+import:
+- package: github.com/huandu/facebook
