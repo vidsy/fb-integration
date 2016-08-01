@@ -1,4 +1,4 @@
-package models
+package fbIntegration
 
 type (
 	// Post comment pending
