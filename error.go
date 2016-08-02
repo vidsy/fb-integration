@@ -1,4 +1,4 @@
-package fbIntegration
+package fbintegration
 
 import (
 	"regexp"
