@@ -1,4 +1,4 @@
-package fbIntegration
+package fbintegration
 
 import (
 	facebookLib "github.com/huandu/facebook"
