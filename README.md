@@ -7,5 +7,5 @@
 ## Usage
 
 ```
-glide get https://github.com/vidsy/fb-integration
+glide get github.com/vidsy/fb-integration
 ```
