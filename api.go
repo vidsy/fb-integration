@@ -45,7 +45,7 @@ func (f *API) Batch(params ...facebookLib.Params) ([]*APIResponse, *Error) {
 	return apiResponses, nil
 }
 
-//Get comment pending
+// Get comment pending
 func (f *API) Get(path string, params facebookLib.Params) (*APIResponse, *Error) {
 	results, err := f.Session.Get(path, params)
 
