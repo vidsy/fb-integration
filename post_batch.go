@@ -46,3 +46,27 @@ func (p PostBatch) InsightParams() []facebookLib.Params {
 
 	return params
 }
+
+// ReactionBreakdownParams comment pending
+func (p PostBatch) ReactionBreakdownParams() []facebookLib.Params {
+	var params []facebookLib.Params
+
+	for i := 0; i < len(p.Posts); i++ {
+		for _, p := range p.Posts[i].GenerateReactionBreakdownParams() {
+			params = append(params, p)
+		}
+	}
+
+	return params
+}
+
+// TotalReactionsParams comment pending
+func (p PostBatch) TotalReactionsParams() []facebookLib.Params {
+	var params []facebookLib.Params
+
+	for i := 0; i < len(p.Posts); i++ {
+		params = append(params, p.Posts[i].GenerateTotalReactionsParams())
+	}
+
+	return params
+}
