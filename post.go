@@ -11,6 +11,7 @@ type (
 	Post struct {
 		ID       string `facebook:"id"        json:"post_id"`
 		ObjectID string `facebook:"object_id" json:"object_id"`
+		Insights *facebookLib.Result
 	}
 )
 

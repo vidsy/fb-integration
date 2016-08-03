@@ -5,12 +5,12 @@ import facebookLib "github.com/huandu/facebook"
 type (
 	// PostBatch comment pending
 	PostBatch struct {
-		Posts []Post
+		Posts []*Post
 	}
 )
 
-//GeneratePostBatchSlices comment pending
-func GeneratePostBatchSlices(posts []Post, size int) []PostBatch {
+// GeneratePostBatchSlices comment pending
+func GeneratePostBatchSlices(posts []*Post, size int) []PostBatch {
 	var postBatches []PostBatch
 
 	amount := (len(posts) / size) + 1
