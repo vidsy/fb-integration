@@ -2,6 +2,8 @@ package fbintegration
 
 import (
 	"fmt"
+	"log"
+	"reflect"
 
 	facebookLib "github.com/huandu/facebook"
 )
@@ -66,4 +68,39 @@ func (p Post) GenerateTotalReactionsParams() facebookLib.Params {
 		"method":       facebookLib.GET,
 		"relative_url": fmt.Sprintf("%s/reactions?limit=0&summary=total_count", p.ID),
 	}
+}
+
+// ParseResults comment pending
+func (p Post) ParseResults() {
+	impressions := p.getInsightsValue("post_impressions")
+	if impressions != nil {
+		p.Impressions = int(impressions["value"].(float64))
+	}
+
+}
+
+func (p Post) getInsightsValue(key string) map[string]interface{} {
+	data := p.Insights.Get("data")
+	slice := reflect.ValueOf(data)
+	log.Println(slice)
+
+	for i := 0; i < slice.Len(); i++ {
+		query := fmt.Sprintf("data.%d.name", i)
+		name := p.Insights.Get(query)
+		log.Println(name)
+
+		if name == key {
+			query = fmt.Sprintf("data.%d.values", i)
+			values := p.Insights.Get(query).([]interface{})
+
+			if len(values) > 0 {
+				query = fmt.Sprintf("data.%d.values.0", i)
+				return p.Insights.Get(query).(map[string]interface{})
+			}
+
+			return nil
+		}
+	}
+
+	return nil
 }
