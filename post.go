@@ -2,7 +2,6 @@ package fbintegration
 
 import (
 	"fmt"
-	"log"
 	"reflect"
 
 	facebookLib "github.com/huandu/facebook"
@@ -46,11 +45,7 @@ func (p Post) GenerateInsightParams() facebookLib.Params {
 func (p Post) GenerateReactionBreakdownParams() []facebookLib.Params {
 	var params []facebookLib.Params
 
-	reactions := []string{
-		"LIKE", "LOVE", "WOW", "HAHA", "SAD", "ANGRY", "THANKFUL",
-	}
-
-	for _, reaction := range reactions {
+	for _, reaction := range p.reactionTypes() {
 		params = append(params,
 			facebookLib.Params{
 				"method":       facebookLib.GET,
@@ -73,11 +68,8 @@ func (p Post) GenerateTotalReactionsParams() facebookLib.Params {
 // ParseResults comment pending
 func (p *Post) ParseResults() {
 	impressions := p.getInsightsValue("post_impressions")
-	log.Println("post_impressions")
 	if impressions != nil {
-		batman := int(impressions["value"].(float64))
-		log.Println(batman)
-		p.Impressions = batman
+		p.Impressions = int(impressions["value"].(float64))
 	}
 
 	paidImpressions := p.getInsightsValue("post_impressions_paid")
@@ -125,6 +117,13 @@ func (p *Post) ParseResults() {
 	if organicViews != nil {
 		p.AverageDuration = int(averageDuration["value"].(float64))
 	}
+
+	p.ReactionsTotal = p.getReactionsTotal(p.TotalReactions)
+
+	p.Reactions = make(map[string]int)
+	for i, reactionType := range p.reactionTypes() {
+		p.Reactions[reactionType] = p.getReactionsTotal(p.ReactionBreakdown[i])
+	}
 }
 
 func (p Post) getInsightsValue(key string) map[string]interface{} {
@@ -149,4 +148,14 @@ func (p Post) getInsightsValue(key string) map[string]interface{} {
 	}
 
 	return nil
+}
+
+func (p Post) getReactionsTotal(result *facebookLib.Result) int {
+	return int(result.Get("summary.total_count").(float64))
+}
+
+func (p Post) reactionTypes() []string {
+	return []string{
+		"LIKE", "LOVE", "WOW", "HAHA", "SAD", "ANGRY", "THANKFUL",
+	}
 }
