@@ -18,7 +18,7 @@ type (
 			Insights          *facebookLib.Result
 			ReactionBreakdown []*facebookLib.Result
 			TotalReactions    *facebookLib.Result
-		}
+		} `json:"-"`
 		Data struct {
 			Impressions        int            `json:"impressions"`
 			PaidImpressions    int            `json:"paid_impressions"`
