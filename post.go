@@ -1,6 +1,7 @@
 package fbintegration
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 
@@ -128,6 +129,16 @@ func (p *Post) ParseResults() {
 	for i, reactionType := range p.reactionTypes() {
 		p.Data.Reactions[reactionType] = p.getReactionsTotal(p.Results.ReactionBreakdown[i])
 	}
+}
+
+// ToJSON comment pending
+func (p *Post) ToJSON() (string, error) {
+	b, err := json.Marshal(p)
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
 }
 
 func (p Post) getInsightsValue(key string) map[string]interface{} {
