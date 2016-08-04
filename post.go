@@ -50,7 +50,7 @@ func (p Post) GenerateInsightParams() facebookLib.Params {
 func (p Post) GenerateReactionBreakdownParams() []facebookLib.Params {
 	var params []facebookLib.Params
 
-	for _, reaction := range p.reactionTypes() {
+	for _, reaction := range p.ReactionTypes() {
 		params = append(params,
 			facebookLib.Params{
 				"method":       facebookLib.GET,
@@ -128,8 +128,15 @@ func (p *Post) ParseResults() {
 	p.Data.ReactionsTotal = p.getReactionsTotal(p.Results.TotalReactions)
 
 	p.Data.Reactions = make(map[string]int)
-	for i, reactionType := range p.reactionTypes() {
+	for i, reactionType := range p.ReactionTypes() {
 		p.Data.Reactions[reactionType] = p.getReactionsTotal(p.Results.ReactionBreakdown[i])
+	}
+}
+
+// ReactionTypes comment pending
+func (p Post) ReactionTypes() []string {
+	return []string{
+		"LIKE", "LOVE", "WOW", "HAHA", "SAD", "ANGRY", "THANKFUL",
 	}
 }
 
@@ -169,10 +176,4 @@ func (p Post) getInsightsValue(key string) map[string]interface{} {
 
 func (p Post) getReactionsTotal(result *facebookLib.Result) int {
 	return int(result.Get("summary.total_count").(float64))
-}
-
-func (p Post) reactionTypes() []string {
-	return []string{
-		"LIKE", "LOVE", "WOW", "HAHA", "SAD", "ANGRY", "THANKFUL",
-	}
 }
