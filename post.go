@@ -71,7 +71,7 @@ func (p Post) GenerateTotalReactionsParams() facebookLib.Params {
 }
 
 // ParseResults comment pending
-func (p Post) ParseResults() {
+func (p Post) ParseResults() Post {
 	impressions := p.getInsightsValue("post_impressions")
 	log.Println("post_impressions")
 	if impressions != nil {
@@ -125,6 +125,8 @@ func (p Post) ParseResults() {
 	if organicViews != nil {
 		p.AverageDuration = int(averageDuration["value"].(float64))
 	}
+
+	return p
 }
 
 func (p Post) getInsightsValue(key string) map[string]interface{} {
