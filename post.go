@@ -115,12 +115,14 @@ func (p *Post) ParseResults() {
 
 	minutesViewed := p.getInsightsValue("post_video_view_time")
 	if organicViews != nil {
-		p.Data.MinutesViewed = int(minutesViewed["value"].(float64))
+		total := int(minutesViewed["value"].(float64))
+		p.Data.MinutesViewed = ((total / 1000) / 60)
 	}
 
 	averageDuration := p.getInsightsValue("post_video_avg_time_watched")
 	if organicViews != nil {
-		p.Data.AverageDuration = int(averageDuration["value"].(float64))
+		total := int(averageDuration["value"].(float64))
+		p.Data.AverageDuration = (total / 1000)
 	}
 
 	p.Data.ReactionsTotal = p.getReactionsTotal(p.Results.TotalReactions)
