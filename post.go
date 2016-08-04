@@ -73,21 +73,67 @@ func (p Post) GenerateTotalReactionsParams() facebookLib.Params {
 // ParseResults comment pending
 func (p Post) ParseResults() {
 	impressions := p.getInsightsValue("post_impressions")
+	log.Println("post_impressions")
 	if impressions != nil {
-		p.Impressions = int(impressions["value"].(float64))
+		batman := int(impressions["value"].(float64))
+		log.Println(batman)
+		p.Impressions = batman
 	}
 
+	paidImpressions := p.getInsightsValue("post_impressions_paid")
+	if impressions != nil {
+		p.PaidImpressions = int(paidImpressions["value"].(float64))
+	}
+
+	p.OrganicImpressions = (p.Impressions - p.PaidImpressions)
+
+	reach := p.getInsightsValue("post_impressions_unique")
+	if impressions != nil {
+		p.Reach = int(reach["value"].(float64))
+	}
+
+	paidReach := p.getInsightsValue("post_impressions_paid_unique")
+	if impressions != nil {
+		p.PaidReach = int(paidReach["value"].(float64))
+	}
+
+	p.OrganicReach = (p.Reach - p.PaidReach)
+
+	paidViews := p.getInsightsValue("post_video_views_paid")
+	if paidViews != nil {
+		p.PaidVideoViews = int(paidViews["value"].(float64))
+	}
+
+	organicViews := p.getInsightsValue("post_video_views_organic")
+	if organicViews != nil {
+		p.OrganicVideoViews = int(organicViews["value"].(float64))
+	}
+
+	p.VideoViews = (p.PaidVideoViews + p.OrganicVideoViews)
+
+	uniquePaidViews := int(p.getInsightsValue("post_video_views_paid_unique")["value"].(float64))
+	uniqueOrganicViews := int(p.getInsightsValue("post_video_views_organic_unique")["value"].(float64))
+
+	p.UniqueVideoViews = (uniquePaidViews + uniqueOrganicViews)
+
+	minutesViewed := p.getInsightsValue("post_video_view_time")
+	if organicViews != nil {
+		p.MinutesViewed = int(minutesViewed["value"].(float64))
+	}
+
+	averageDuration := p.getInsightsValue("post_video_avg_time_watched")
+	if organicViews != nil {
+		p.AverageDuration = int(averageDuration["value"].(float64))
+	}
 }
 
 func (p Post) getInsightsValue(key string) map[string]interface{} {
 	data := p.Insights.Get("data")
 	slice := reflect.ValueOf(data)
-	log.Println(slice)
 
 	for i := 0; i < slice.Len(); i++ {
 		query := fmt.Sprintf("data.%d.name", i)
 		name := p.Insights.Get(query)
-		log.Println(name)
 
 		if name == key {
 			query = fmt.Sprintf("data.%d.values", i)
