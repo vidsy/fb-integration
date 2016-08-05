@@ -36,6 +36,18 @@ func GeneratePostBatchSlices(posts []*Post, size int) []PostBatch {
 	return postBatches
 }
 
+// EngagementParams comment pending
+func (p PostBatch) EngagementParams() []facebookLib.Params {
+	var params []facebookLib.Params
+
+	for i := 0; i < len(p.Posts); i++ {
+		params = append(params, p.Posts[i].GenerateCommentsParams())
+		params = append(params, p.Posts[i].GenerateSharesParams())
+	}
+
+	return params
+}
+
 // InsightParams comment pending
 func (p PostBatch) InsightParams() []facebookLib.Params {
 	var params []facebookLib.Params
