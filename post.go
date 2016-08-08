@@ -11,32 +11,31 @@ import (
 type (
 	// Post comment pending
 	Post struct {
+		Name     string `facebook:"message" json:"name"`
 		ID       string `facebook:"id"        json:"post_id"`
+		AdID     string `json:"ad_id"`
 		ObjectID string `facebook:"object_id" json:"object_id"`
-		Name     string `json:"name"`
-		Results  struct {
-			Insights          *facebookLib.Result
-			ReactionBreakdown []*facebookLib.Result
-			TotalReactions    *facebookLib.Result
-		} `json:"-"`
-		Data struct {
-			Impressions        int            `json:"impressions"`
-			PaidImpressions    int            `json:"paid_impressions"`
-			OrganicImpressions int            `json:"organic_impressions"`
-			Reach              int            `json:"reach"`
-			PaidReach          int            `json:"paid_reach"`
-			OrganicReach       int            `json:"organic_reach"`
-			VideoViews         int            `json:"video_views"`
-			PaidVideoViews     int            `json:"paid_video_views"`
-			OrganicVideoViews  int            `json:"organic_video_views"`
-			UniqueVideoViews   int            `json:"unique_video_views"`
-			MinutesViewed      int            `json:"minutes_viewed"`
-			AverageDuration    int            `json:"average_duration"`
-			ReactionsTotal     int            `json:"reactions_total"`
-			Reactions          map[string]int `json:"reactions"`
-		} `json:"data"`
+
+		Results *PostResults `json:"-"`
+		Data    *PostData    `json:"data,omitempty"`
 	}
 )
+
+// NewPostFromResult comment pending
+func NewPostFromResult(result facebookLib.Result) Post {
+	var post Post
+	post.Results = &PostResults{}
+	result.DecodeField("", &post)
+	return post
+}
+
+// GenerateParams comments pending
+func (p *Post) GenerateParams() facebookLib.Params {
+	return facebookLib.Params{
+		"method":       facebookLib.GET,
+		"relative_url": fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"),
+	}
+}
 
 // GenerateInsightParams comment pending
 func (p Post) GenerateInsightParams() facebookLib.Params {
@@ -72,6 +71,7 @@ func (p Post) GenerateTotalReactionsParams() facebookLib.Params {
 
 // ParseResults comment pending
 func (p *Post) ParseResults() {
+	p.Data = &PostData{}
 	impressions := p.getInsightsValue("post_impressions")
 	if impressions != nil {
 		p.Data.Impressions = int(impressions["value"].(float64))
