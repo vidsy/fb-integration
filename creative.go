@@ -2,13 +2,14 @@ package fbintegration
 
 import (
 	"fmt"
+
 	facebookLib "github.com/huandu/facebook"
 )
 
 const videoType = "VIDEO"
 
 type (
-	//Creative comment pending
+	// Creative comment pending
 	Creative struct {
 		ID         string `facebook:"id"`
 		ObjectType string `facebook:"object_type"`
@@ -16,13 +17,14 @@ type (
 	}
 )
 
+// NewCreativeFromResult comment pending
 func NewCreativeFromResult(result facebookLib.Result) Creative {
 	var creative Creative
 	result.DecodeField("", &creative)
 	return creative
 }
 
-//GenerateParams comments pending
+// GenerateParams comments pending
 func (c *Creative) GenerateParams() facebookLib.Params {
 	return facebookLib.Params{
 		"method":       facebookLib.GET,
@@ -30,7 +32,7 @@ func (c *Creative) GenerateParams() facebookLib.Params {
 	}
 }
 
-//IsVideo comment pending
+// IsVideo comment pending
 func (c *Creative) IsVideo() bool {
 	if c.ObjectType == videoType {
 		return true

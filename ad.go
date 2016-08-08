@@ -5,7 +5,7 @@ import (
 )
 
 type (
-	//Ad comment pending
+	// Ad comment pending
 	Ad struct {
 		ID       string
 		Creative Creative
@@ -13,7 +13,7 @@ type (
 	}
 )
 
-//NewAd comment pending
+// NewAd comment pending
 func NewAd(result *facebookLib.Result) Ad {
 	var id string
 	var creativeID string
@@ -30,7 +30,7 @@ func NewAd(result *facebookLib.Result) Ad {
 	return ad
 }
 
-//CreateBatchParams comment pending
+// CreateBatchParams comment pending
 func (a *Ad) CreateBatchParams() facebookLib.Params {
 	return facebookLib.Params{
 		"method":       facebookLib.GET,

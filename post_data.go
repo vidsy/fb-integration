@@ -17,5 +17,7 @@ type (
 		AverageDuration    int            `json:"average_duration"`
 		ReactionsTotal     int            `json:"reactions_total"`
 		Reactions          map[string]int `json:"reactions"`
+		Comments           int            `json:"comments"`
+		Shares             int            `json:"shares"`
 	}
 )

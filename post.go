@@ -11,13 +11,12 @@ import (
 type (
 	// Post comment pending
 	Post struct {
-		Name     string `facebook:"message" json:"name"`
-		ID       string `facebook:"id"        json:"post_id"`
-		AdID     string `json:"ad_id"`
-		ObjectID string `facebook:"object_id" json:"object_id"`
-
-		Results *PostResults `json:"-"`
-		Data    *PostData    `json:"data,omitempty"`
+		Name     string       `facebook:"message" json:"name"`
+		ID       string       `facebook:"id"        json:"post_id"`
+		AdID     string       `json:"ad_id"`
+		ObjectID string       `facebook:"object_id" json:"object_id"`
+		Results  *PostResults `json:"-"`
+		Data     *PostData    `json:"data,omitempty"`
 	}
 )
 
@@ -29,11 +28,11 @@ func NewPostFromResult(result facebookLib.Result) Post {
 	return post
 }
 
-// GenerateParams comments pending
-func (p *Post) GenerateParams() facebookLib.Params {
+// GenerateCommentsParams comment pending
+func (p Post) GenerateCommentsParams() facebookLib.Params {
 	return facebookLib.Params{
 		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"),
+		"relative_url": fmt.Sprintf("%s/comments?summary=true&filter=stream", p.ID),
 	}
 }
 
@@ -42,6 +41,14 @@ func (p Post) GenerateInsightParams() facebookLib.Params {
 	return facebookLib.Params{
 		"method":       facebookLib.GET,
 		"relative_url": fmt.Sprintf("%s/insights/post_impressions,post_impressions_paid,post_impressions_unique,post_impressions_paid_unique,post_video_views_paid,post_video_views_organic,post_video_views_organic_unique,post_video_views_paid_unique,post_video_view_time,post_video_avg_time_watched?period=lifetime&limit=20", p.ID),
+	}
+}
+
+// GenerateParams comments pending
+func (p *Post) GenerateParams() facebookLib.Params {
+	return facebookLib.Params{
+		"method":       facebookLib.GET,
+		"relative_url": fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"),
 	}
 }
 
@@ -59,6 +66,14 @@ func (p Post) GenerateReactionBreakdownParams() []facebookLib.Params {
 	}
 
 	return params
+}
+
+// GenerateSharesParams comment pending
+func (p Post) GenerateSharesParams() facebookLib.Params {
+	return facebookLib.Params{
+		"method":       facebookLib.GET,
+		"relative_url": fmt.Sprintf("%s/sharedposts", p.ID),
+	}
 }
 
 // GenerateTotalReactionsParams comment pending
@@ -131,6 +146,10 @@ func (p *Post) ParseResults() {
 	for i, reactionType := range p.ReactionTypes() {
 		p.Data.Reactions[reactionType] = p.getReactionsTotal(p.Results.ReactionBreakdown[i])
 	}
+
+	p.Data.Comments = p.getComments()
+
+	p.Data.Shares = p.getShares()
 }
 
 // ReactionTypes comment pending
@@ -148,6 +167,10 @@ func (p *Post) ToJSON() (string, error) {
 	}
 
 	return string(b), nil
+}
+
+func (p Post) getComments() int {
+	return int(p.Results.Engagement[0].Get("summary.total_count").(float64))
 }
 
 func (p Post) getInsightsValue(key string) map[string]interface{} {
@@ -172,6 +195,13 @@ func (p Post) getInsightsValue(key string) map[string]interface{} {
 	}
 
 	return nil
+}
+
+func (p Post) getShares() int {
+	data := p.Results.Engagement[1].Get("data")
+	slice := reflect.ValueOf(data)
+
+	return slice.Len()
 }
 
 func (p Post) getReactionsTotal(result *facebookLib.Result) int {
