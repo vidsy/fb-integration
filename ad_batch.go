@@ -5,13 +5,13 @@ import (
 )
 
 type (
-	//AdBatch comment pending
+	// AdBatch comment pending
 	AdBatch struct {
 		Ads []Ad
 	}
 )
 
-//CreativeParams comment pending
+// CreativeParams comment pending
 func (a *AdBatch) CreativeParams() []facebookLib.Params {
 	var params []facebookLib.Params
 
@@ -22,7 +22,7 @@ func (a *AdBatch) CreativeParams() []facebookLib.Params {
 	return params
 }
 
-//PostParams comment pending
+// PostParams comment pending
 func (a *AdBatch) PostParams() []facebookLib.Params {
 	var params []facebookLib.Params
 

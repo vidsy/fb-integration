@@ -5,7 +5,7 @@ import (
 )
 
 type (
-	//BrandAds comment pending
+	// BrandAds comment pending
 	BrandAds struct {
 		FBAdAccountID string
 		Ads           []Ad
@@ -14,7 +14,7 @@ type (
 	}
 )
 
-//NewBrandAds comment pending
+// NewBrandAds comment pending
 func NewBrandAds(adAccountID string, brandID int64, brandName string) BrandAds {
 	var ads []Ad
 
@@ -26,7 +26,7 @@ func NewBrandAds(adAccountID string, brandID int64, brandName string) BrandAds {
 	}
 }
 
-//GenerateParams comment pending
+// GenerateParams comment pending
 func (ba *BrandAds) GenerateParams() facebookLib.Params {
 	return facebookLib.Params{
 		"date_preset": "lifetime",
@@ -35,12 +35,12 @@ func (ba *BrandAds) GenerateParams() facebookLib.Params {
 	}
 }
 
-//Add comment pending
+// Add comment pending
 func (ba *BrandAds) Add(ad Ad) {
 	ba.Ads = append(ba.Ads, ad)
 }
 
-//GenerateSlices comment pending
+// GenerateSlices comment pending
 func (ba *BrandAds) GenerateSlices(size int) []AdBatch {
 	var adBatch []AdBatch
 
@@ -59,7 +59,7 @@ func (ba *BrandAds) GenerateSlices(size int) []AdBatch {
 	return adBatch
 }
 
-//FindByCreativeID comment pending
+// FindByCreativeID comment pending
 func (ba *BrandAds) FindByCreativeID(creativeID string) *Ad {
 	for i, ad := range ba.Ads {
 		if ad.Creative.ID == creativeID {
@@ -70,7 +70,7 @@ func (ba *BrandAds) FindByCreativeID(creativeID string) *Ad {
 	return nil
 }
 
-//FindByPostID comment pending
+// FindByPostID comment pending
 func (ba *BrandAds) FindByPostID(postID string) *Ad {
 	for i, ad := range ba.Ads {
 		if ad.Creative.PostID == postID {
@@ -80,7 +80,7 @@ func (ba *BrandAds) FindByPostID(postID string) *Ad {
 	return nil
 }
 
-//FindByObjectID comment pending
+// FindByObjectID comment pending
 func (ba *BrandAds) FindByObjectID(objectID string) *Ad {
 	for i, ad := range ba.Ads {
 		if ad.Post.ObjectID == objectID {
