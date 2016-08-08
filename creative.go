@@ -5,7 +5,7 @@ import (
 	facebookLib "github.com/huandu/facebook"
 )
 
-const VIDEO_TYPE = "VIDEO"
+const videoType = "VIDEO"
 
 type (
 	//Creative comment pending
@@ -32,7 +32,7 @@ func (c *Creative) GenerateParams() facebookLib.Params {
 
 //IsVideo comment pending
 func (c *Creative) IsVideo() bool {
-	if c.ObjectType == VIDEO_TYPE {
+	if c.ObjectType == videoType {
 		return true
 	}
 	return false
