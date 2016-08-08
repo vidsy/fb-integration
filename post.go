@@ -28,11 +28,11 @@ func NewPostFromResult(result facebookLib.Result) Post {
 	return post
 }
 
-// GenerateParams comments pending
-func (p *Post) GenerateParams() facebookLib.Params {
+// GenerateCommentsParams comment pending
+func (p Post) GenerateCommentsParams() facebookLib.Params {
 	return facebookLib.Params{
 		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"),
+		"relative_url": fmt.Sprintf("%s/comments?summary=true&filter=stream", p.ID),
 	}
 }
 
@@ -41,6 +41,14 @@ func (p Post) GenerateInsightParams() facebookLib.Params {
 	return facebookLib.Params{
 		"method":       facebookLib.GET,
 		"relative_url": fmt.Sprintf("%s/insights/post_impressions,post_impressions_paid,post_impressions_unique,post_impressions_paid_unique,post_video_views_paid,post_video_views_organic,post_video_views_organic_unique,post_video_views_paid_unique,post_video_view_time,post_video_avg_time_watched?period=lifetime&limit=20", p.ID),
+	}
+}
+
+// GenerateParams comments pending
+func (p *Post) GenerateParams() facebookLib.Params {
+	return facebookLib.Params{
+		"method":       facebookLib.GET,
+		"relative_url": fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"),
 	}
 }
 
