@@ -196,22 +196,10 @@ func (p *Post) ToJSON() (string, error) {
 func (p Post) generateAudienceSplit() []*AudienceSplit {
 	data := p.Results.AdBreakdownInsights.Get("data")
 	slice := reflect.ValueOf(data)
-
 	audienceSplits := make([]*AudienceSplit, slice.Len())
 
 	for i := 0; i < slice.Len(); i++ {
-		query := "data.%d.%s"
-		genderQuery := fmt.Sprintf(query, i, "gender")
-		ageQuery := fmt.Sprintf(query, i, "age")
-		valueQuery := fmt.Sprintf(query, i, "reach")
-
-		audienceSplit := &AudienceSplit{
-			p.Results.AdBreakdownInsights.Get(genderQuery).(string),
-			p.Results.AdBreakdownInsights.Get(ageQuery).(string),
-			p.Results.AdBreakdownInsights.Get(valueQuery).(string),
-		}
-
-		audienceSplits[i] = audienceSplit
+		audienceSplits[i] = NewAudienceSplitFromResult(p.Results.AdBreakdownInsights, i)
 	}
 
 	return audienceSplits
