@@ -82,3 +82,27 @@ func (p PostBatch) TotalReactionsParams() []facebookLib.Params {
 
 	return params
 }
+
+// TotalAdInsightsParams comment pending
+func (p PostBatch) TotalAdInsightsParams() []facebookLib.Params {
+	var params []facebookLib.Params
+
+	for i := 0; i < len(p.Posts); i++ {
+		ad := Ad{ID: p.Posts[i].AdID}
+		params = append(params, ad.CreateInsightParams())
+	}
+
+	return params
+}
+
+// TotalAdInsightsBreakDownsParams comment pending
+func (p PostBatch) TotalAdInsightsBreakDownParams() []facebookLib.Params {
+	var params []facebookLib.Params
+
+	for i := 0; i < len(p.Posts); i++ {
+		ad := Ad{ID: p.Posts[i].AdID}
+		params = append(params, ad.CreateBreakdownInsightParams())
+	}
+
+	return params
+}
