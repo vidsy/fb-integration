@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strconv"
 
 	facebookLib "github.com/huandu/facebook"
 )
@@ -150,6 +151,29 @@ func (p *Post) ParseResults() {
 	p.Data.Comments = p.getComments()
 
 	p.Data.Shares = p.getShares()
+
+	totalClicks := p.getAdInsightsValue("clicks")
+	if totalClicks != nil {
+		int64Value, err := strconv.ParseInt(totalClicks.(string), 10, 32)
+		if err == nil {
+			p.Data.TotalClicks = int64Value
+		}
+	}
+
+	totalSpend := p.getAdInsightsValue("spend")
+	if totalSpend != nil {
+		p.Data.Spend = totalSpend.(float64)
+	}
+
+	uniquePeopleEngaged := p.getAdInsightsValue("total_unique_actions")
+	if uniquePeopleEngaged != nil {
+		int64Value, err := strconv.ParseInt(uniquePeopleEngaged.(string), 10, 32)
+		if err == nil {
+			p.Data.UniquePeopleEngaged = int64Value
+		}
+	}
+
+	p.Data.AudienceSplit = p.generateAudienceSplit()
 }
 
 // ReactionTypes comment pending
@@ -167,6 +191,18 @@ func (p *Post) ToJSON() (string, error) {
 	}
 
 	return string(b), nil
+}
+
+func (p Post) generateAudienceSplit() []*AudienceSplit {
+	data := p.Results.AdBreakdownInsights.Get("data")
+	slice := reflect.ValueOf(data)
+	audienceSplits := make([]*AudienceSplit, slice.Len())
+
+	for i := 0; i < slice.Len(); i++ {
+		audienceSplits[i] = NewAudienceSplitFromResult(p.Results.AdBreakdownInsights, i)
+	}
+
+	return audienceSplits
 }
 
 func (p Post) getComments() int {
@@ -202,6 +238,17 @@ func (p Post) getShares() int {
 	slice := reflect.ValueOf(data)
 
 	return slice.Len()
+}
+
+func (p Post) getAdInsightsValue(key string) interface{} {
+	query := fmt.Sprintf("data.0.%s", key)
+	value := p.Results.AdInsights.Get(query)
+
+	if value != nil {
+		return value
+	}
+
+	return nil
 }
 
 func (p Post) getReactionsTotal(result *facebookLib.Result) int {

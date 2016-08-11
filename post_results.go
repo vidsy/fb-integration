@@ -7,9 +7,11 @@ import (
 type (
 	// PostResults comment pending
 	PostResults struct {
-		Engagement        []*facebookLib.Result
-		Insights          *facebookLib.Result
-		ReactionBreakdown []*facebookLib.Result
-		TotalReactions    *facebookLib.Result
+		Engagement          []*facebookLib.Result
+		Insights            *facebookLib.Result
+		AdInsights          *facebookLib.Result
+		AdBreakdownInsights *facebookLib.Result
+		ReactionBreakdown   []*facebookLib.Result
+		TotalReactions      *facebookLib.Result
 	}
 )
