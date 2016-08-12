@@ -22,6 +22,7 @@ type (
 		Clicks              int64            `json:"clicks"`
 		UniquePeopleEngaged int64            `json:"unique_people_engaged"`
 		Spend               float64          `json:"spend"`
+		VideoViewCost       float64          `json:"video_view_cost"`
 		AudienceSplit       []*AudienceSplit `json:"audience_split"`
 	}
 )

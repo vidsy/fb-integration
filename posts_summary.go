@@ -5,20 +5,23 @@ import "encoding/json"
 type (
 	// PostsSummary comment pending
 	PostsSummary struct {
-		TotalImpressions        int            `json:"total_impressions"`
-		TotalPaidImpressions    int            `json:"total_paid_impressions"`
-		TotalOrganicImpressions int            `json:"total_organic_impressions"`
-		TotalReach              int            `json:"total_reach"`
-		TotalPaidReach          int            `json:"total_paid_reach"`
-		TotalOrganicReach       int            `json:"total_organic_reach"`
-		TotalVideoViews         int            `json:"total_video_views"`
-		TotalPaidVideoViews     int            `json:"total_paid_video_views"`
-		TotalOrganicVideoViews  int            `json:"total_organic_video_views"`
-		TotalUniqueVideoViews   int            `json:"total_unique_video_views"`
-		TotalMinutesViewed      int            `json:"total_minutes_viewed"`
-		TotalVideosUsed         int            `json:"total_videos_user"`
-		ReactionsTotal          int            `json:"reactions_total"`
-		Reactions               map[string]int `json:"reactions"`
+		TotalImpressions         int            `json:"total_impressions"`
+		TotalPaidImpressions     int            `json:"total_paid_impressions"`
+		TotalOrganicImpressions  int            `json:"total_organic_impressions"`
+		TotalReach               int            `json:"total_reach"`
+		TotalPaidReach           int            `json:"total_paid_reach"`
+		TotalOrganicReach        int            `json:"total_organic_reach"`
+		TotalVideoViews          int            `json:"total_video_views"`
+		TotalPaidVideoViews      int            `json:"total_paid_video_views"`
+		TotalOrganicVideoViews   int            `json:"total_organic_video_views"`
+		TotalUniqueVideoViews    int            `json:"total_unique_video_views"`
+		TotalMinutesViewed       int            `json:"total_minutes_viewed"`
+		TotalVideosUsed          int            `json:"total_videos_used"`
+		ReactionsTotal           int            `json:"reactions_total"`
+		Reactions                map[string]int `json:"reactions"`
+		TotalClicks              int            `json:"total_clicks"`
+		TotalUniquePeopleEngaged int            `json:"total_unique_people_engaged"`
+		TotalSpend               int            `json:"total_spend"`
 	}
 )
 
@@ -63,7 +66,7 @@ func (p *PostsSummary) ToJSON() (string, error) {
 }
 
 func calculateVideosUsed(posts []*Post) int {
-	videosUsed := make(map[string]Post)
+	videosUsed := make(map[string]*Post)
 
 	for _, post := range posts {
 		if _, exists := videosUsed[post.ObjectID]; !exists {
