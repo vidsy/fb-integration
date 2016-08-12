@@ -5,23 +5,24 @@ import "encoding/json"
 type (
 	// PostsSummary comment pending
 	PostsSummary struct {
-		TotalImpressions         int            `json:"total_impressions"`
-		TotalPaidImpressions     int            `json:"total_paid_impressions"`
-		TotalOrganicImpressions  int            `json:"total_organic_impressions"`
-		TotalReach               int            `json:"total_reach"`
-		TotalPaidReach           int            `json:"total_paid_reach"`
-		TotalOrganicReach        int            `json:"total_organic_reach"`
-		TotalVideoViews          int            `json:"total_video_views"`
-		TotalPaidVideoViews      int            `json:"total_paid_video_views"`
-		TotalOrganicVideoViews   int            `json:"total_organic_video_views"`
-		TotalUniqueVideoViews    int            `json:"total_unique_video_views"`
-		TotalMinutesViewed       int            `json:"total_minutes_viewed"`
-		TotalVideosUsed          int            `json:"total_videos_used"`
-		ReactionsTotal           int            `json:"reactions_total"`
-		Reactions                map[string]int `json:"reactions"`
-		TotalClicks              int            `json:"total_clicks"`
-		TotalUniquePeopleEngaged int            `json:"total_unique_people_engaged"`
-		TotalSpend               int            `json:"total_spend"`
+		TotalImpressions                   int            `json:"total_impressions"`
+		TotalPaidImpressions               int            `json:"total_paid_impressions"`
+		TotalOrganicImpressions            int            `json:"total_organic_impressions"`
+		TotalReach                         int            `json:"total_reach"`
+		TotalPaidReach                     int            `json:"total_paid_reach"`
+		TotalOrganicReach                  int            `json:"total_organic_reach"`
+		TotalVideoViews                    int            `json:"total_video_views"`
+		TotalPaidVideoViews                int            `json:"total_paid_video_views"`
+		TotalOrganicVideoViews             int            `json:"total_organic_video_views"`
+		TotalUniqueVideoViews              int            `json:"total_unique_video_views"`
+		TotalMinutesViewed                 int            `json:"total_minutes_viewed"`
+		TotalVideosUsed                    int            `json:"total_videos_used"`
+		ReactionsTotal                     int            `json:"reactions_total"`
+		Reactions                          map[string]int `json:"reactions"`
+		TotalClicks                        int            `json:"total_clicks"`
+		TotalUniquePeopleEngaged           int            `json:"total_unique_people_engaged"`
+		TotalActions                       int64          `json:"total_actions"`
+		TotalEngagementPercentPeopleViewed int64          `json:"total_engagement_percent_people_viewed"`
 	}
 )
 
@@ -44,6 +45,7 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 		ps.TotalUniqueVideoViews += post.Data.UniqueVideoViews
 		ps.TotalMinutesViewed += post.Data.MinutesViewed
 		ps.ReactionsTotal += post.Data.ReactionsTotal
+		ps.TotalActions += post.Data.Actions
 
 		for _, reactionType := range post.ReactionTypes() {
 			ps.Reactions[reactionType] += post.Data.Reactions[reactionType]
