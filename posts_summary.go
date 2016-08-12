@@ -80,11 +80,11 @@ func calculateAverage(total float64, divisor int) float64 {
 }
 
 func calculateVideosUsed(posts []*Post) int {
-	videosUsed := make(map[string]*Post)
+	videosUsed := make(map[string]*interface{})
 
 	for _, post := range posts {
 		if _, exists := videosUsed[post.ObjectID]; !exists {
-			videosUsed[post.ObjectID] = post
+			videosUsed[post.ObjectID] = nil
 		}
 	}
 
