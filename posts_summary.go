@@ -16,6 +16,7 @@ type (
 		TotalOrganicVideoViews  int            `json:"total_organic_video_views"`
 		TotalUniqueVideoViews   int            `json:"total_unique_video_views"`
 		TotalMinutesViewed      int            `json:"total_minutes_viewed"`
+		TotalVideosUsed         int            `json:"total_videos_user"`
 		ReactionsTotal          int            `json:"reactions_total"`
 		Reactions               map[string]int `json:"reactions"`
 	}
@@ -46,6 +47,8 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 		}
 	}
 
+	ps.TotalVideosUsed = calculateVideosUsed(posts)
+
 	return ps
 }
 
@@ -57,4 +60,16 @@ func (p *PostsSummary) ToJSON() (string, error) {
 	}
 
 	return string(b), nil
+}
+
+func calculateVideosUsed(posts []*Post) int {
+	videosUsed := make(map[string]Post)
+
+	for _, post := range posts {
+		if _, exists := videosUsed[post.ObjectID]; !exists {
+			videosUsed[post.ObjectID] = post
+		}
+	}
+
+	return len(videosUsed)
 }

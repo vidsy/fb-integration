@@ -136,7 +136,7 @@ func (p *Post) ParseResults() {
 	}
 
 	averageDuration := p.getInsightsValue("post_video_avg_time_watched")
-	if organicViews != nil {
+	if averageDuration != nil {
 		total := int(averageDuration["value"].(float64))
 		p.Data.AverageDuration = (total / 1000)
 	}
