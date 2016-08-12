@@ -19,7 +19,7 @@ type (
 		Reactions           map[string]int   `json:"reactions"`
 		Comments            int              `json:"comments"`
 		Shares              int              `json:"shares"`
-		TotalClicks         int64            `json:"total_clicks"`
+		Clicks              int64            `json:"clicks"`
 		UniquePeopleEngaged int64            `json:"unique_people_engaged"`
 		Spend               float64          `json:"spend"`
 		AudienceSplit       []*AudienceSplit `json:"audience_split"`

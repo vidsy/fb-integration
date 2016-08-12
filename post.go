@@ -156,7 +156,7 @@ func (p *Post) ParseResults() {
 	if totalClicks != nil {
 		int64Value, err := strconv.ParseInt(totalClicks.(string), 10, 32)
 		if err == nil {
-			p.Data.TotalClicks = int64Value
+			p.Data.Clicks = int64Value
 		}
 	}
 
