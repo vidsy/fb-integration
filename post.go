@@ -174,10 +174,17 @@ func (p *Post) ParseResults() {
 	}
 
 	p.Data.Actions = int64(p.Data.ReactionsTotal) + int64(p.Data.Comments) + int64(p.Data.Shares) + p.Data.Clicks
-	if p.Data.Actions > 0 {
+	if p.Data.Actions > 0 && p.Data.UniqueVideoViews > 0 {
 		p.Data.EngagementPercentPeopleViewed = p.round((float64(p.Data.Actions)/float64(p.Data.UniqueVideoViews))*100, 2)
 	}
-	p.Data.VideoViewCost = p.round(p.Data.Spend/(float64(p.Data.OrganicVideoViews)+float64(p.Data.PaidVideoViews)), 4)
+
+	if p.Data.VideoViews > 0 && p.Data.Impressions > 0 {
+		p.Data.ViewRate = p.round((float64(p.Data.VideoViews)/float64(p.Data.Impressions))*100, 2)
+	}
+
+	if p.Data.OrganicVideoViews > 0 || p.Data.PaidVideoViews > 0 {
+		p.Data.VideoViewCost = p.round(p.Data.Spend/(float64(p.Data.OrganicVideoViews)+float64(p.Data.PaidVideoViews)), 4)
+	}
 	p.Data.AudienceSplit = p.generateAudienceSplit()
 }
 

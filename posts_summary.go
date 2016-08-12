@@ -22,7 +22,8 @@ type (
 		TotalClicks                        int            `json:"total_clicks"`
 		TotalUniquePeopleEngaged           int            `json:"total_unique_people_engaged"`
 		TotalActions                       int64          `json:"total_actions"`
-		TotalEngagementPercentPeopleViewed int64          `json:"total_engagement_percent_people_viewed"`
+		TotalEngagementPercentPeopleViewed float64        `json:"total_engagement_percent_people_viewed"`
+		TotalViewRate                      float64        `json:"total_view_rate"`
 	}
 )
 
@@ -46,6 +47,8 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 		ps.TotalMinutesViewed += post.Data.MinutesViewed
 		ps.ReactionsTotal += post.Data.ReactionsTotal
 		ps.TotalActions += post.Data.Actions
+		ps.TotalEngagementPercentPeopleViewed += post.Data.EngagementPercentPeopleViewed
+		ps.TotalViewRate += post.Data.ViewRate
 
 		for _, reactionType := range post.ReactionTypes() {
 			ps.Reactions[reactionType] += post.Data.Reactions[reactionType]
