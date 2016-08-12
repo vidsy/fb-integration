@@ -56,6 +56,9 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 		}
 	}
 
+	ps.TotalEngagementPercentPeopleViewed = calculateAverage(ps.TotalEngagementPercentPeopleViewed, len(posts))
+	ps.TotalViewRate = calculateAverage(ps.TotalViewRate, len(posts))
+
 	ps.TotalVideosUsed = calculateVideosUsed(posts)
 	ps.TopVideoID = findTopVideoFromEngagementPercentPeopleViewedVideo(posts)
 
@@ -70,6 +73,10 @@ func (p *PostsSummary) ToJSON() (string, error) {
 	}
 
 	return string(b), nil
+}
+
+func calculateAverage(total float64, divisor int) float64 {
+	return total / float64(divisor)
 }
 
 func calculateVideosUsed(posts []*Post) int {
