@@ -95,7 +95,7 @@ func (p PostBatch) TotalAdInsightsParams() []facebookLib.Params {
 	return params
 }
 
-// TotalAdInsightsBreakDownsParams comment pending
+// TotalAdInsightsBreakDownParams comment pending
 func (p PostBatch) TotalAdInsightsBreakDownParams() []facebookLib.Params {
 	var params []facebookLib.Params
 
