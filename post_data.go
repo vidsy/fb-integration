@@ -26,6 +26,6 @@ type (
 		Actions                       float64            `json:"actions"`
 		EngagementPercentPeopleViewed float64            `json:"engagement_percent_people_viewed"`
 		ViewRate                      float64            `json:"view_rate"`
-		AudienceSplit                 []*AudienceSplit   `json:"audience_split"`
+		AudienceSplit                 AudienceSplit      `json:"audience_split"`
 	}
 )
