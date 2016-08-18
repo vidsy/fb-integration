@@ -185,7 +185,7 @@ func (p *Post) ParseResults() {
 	if p.Data.OrganicVideoViews > 0 || p.Data.PaidVideoViews > 0 {
 		p.Data.VideoViewCost = p.Data.Spend / (p.Data.OrganicVideoViews + p.Data.PaidVideoViews)
 	}
-	p.Data.AudienceSplit = p.generateAudienceSplit()
+	p.Data.AudienceSplit = p.generateAudienceSplit(p.Data.Reach + p.Data.OrganicImpressions)
 }
 
 // ReactionTypes comment pending
@@ -205,16 +205,8 @@ func (p *Post) ToJSON() (string, error) {
 	return string(b), nil
 }
 
-func (p Post) generateAudienceSplit() []*AudienceSplit {
-	data := p.Results.AdBreakdownInsights.Get("data")
-	slice := reflect.ValueOf(data)
-	audienceSplits := make([]*AudienceSplit, slice.Len())
-
-	for i := 0; i < slice.Len(); i++ {
-		audienceSplits[i] = NewAudienceSplitFromResult(p.Results.AdBreakdownInsights, i)
-	}
-
-	return audienceSplits
+func (p Post) generateAudienceSplit(reach float64) AudienceSplit {
+	return NewAudienceSplitFromResult(p.Results.AdBreakdownInsights, reach)
 }
 
 func (p Post) getComments() float64 {
