@@ -105,6 +105,14 @@ func (p *Post) ParseResults() {
 		p.Data.Reach = reach["value"].(float64)
 	}
 
+	sampledReach := p.getAdInsightsValue("reach")
+	if sampledReach != nil {
+		float64Value, err := strconv.ParseFloat(sampledReach.(string), 64)
+		if err == nil {
+			p.Data.SampledReach = float64Value
+		}
+	}
+
 	paidReach := p.getInsightsValue("post_impressions_paid_unique")
 	if impressions != nil {
 		p.Data.PaidReach = paidReach["value"].(float64)
@@ -185,7 +193,7 @@ func (p *Post) ParseResults() {
 	if p.Data.OrganicVideoViews > 0 || p.Data.PaidVideoViews > 0 {
 		p.Data.VideoViewCost = p.Data.Spend / (p.Data.OrganicVideoViews + p.Data.PaidVideoViews)
 	}
-	p.Data.AudienceSplit = p.generateAudienceSplit(p.Data.Reach + p.Data.OrganicImpressions)
+	p.Data.AudienceSplit = p.generateAudienceSplit()
 }
 
 // ReactionTypes comment pending
@@ -205,8 +213,8 @@ func (p *Post) ToJSON() (string, error) {
 	return string(b), nil
 }
 
-func (p Post) generateAudienceSplit(reach float64) AudienceSplit {
-	return NewAudienceSplitFromResult(p.Results.AdBreakdownInsights, reach)
+func (p Post) generateAudienceSplit() AudienceSplit {
+	return NewAudienceSplitFromResult(p.Results.AdBreakdownInsights, p.Data.SampledReach)
 }
 
 func (p Post) getComments() float64 {

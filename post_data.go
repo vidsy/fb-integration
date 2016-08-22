@@ -7,6 +7,7 @@ type (
 		PaidImpressions               float64            `json:"paid_impressions"`
 		OrganicImpressions            float64            `json:"organic_impressions"`
 		Reach                         float64            `json:"reach"`
+		SampledReach                  float64            `json:"sampled_reach"`
 		PaidReach                     float64            `json:"paid_reach"`
 		OrganicReach                  float64            `json:"organic_reach"`
 		VideoViews                    float64            `json:"video_views"`
