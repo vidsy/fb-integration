@@ -41,7 +41,7 @@ func (p Post) GenerateCommentsParams() facebookLib.Params {
 func (p Post) GenerateInsightParams() facebookLib.Params {
 	return facebookLib.Params{
 		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s/insights/post_impressions,post_impressions_paid,post_impressions_unique,post_impressions_paid_unique,post_video_views_paid,post_video_views_organic,post_video_views_organic_unique,post_video_views_paid_unique,post_video_view_time,post_video_avg_time_watched?period=lifetime&limit=20", p.ID),
+		"relative_url": fmt.Sprintf("%s/insights/post_video_views_unique,post_engaged_users,post_video_complete_views_organic,post_video_complete_views_paid,post_consumptions,post_impressions,post_impressions_paid,post_impressions_unique,post_impressions_paid_unique,post_video_views,post_video_views_paid,post_video_views_organic,post_video_view_time,post_video_avg_time_watched?period=lifetime&limit=20", p.ID),
 	}
 }
 
@@ -98,6 +98,23 @@ func (p *Post) ParseResults() {
 		p.Data.PaidImpressions = paidImpressions["value"].(float64)
 	}
 
+	organicVideoCompletion := p.getInsightsValue("post_video_complete_views_organic")
+	if organicVideoCompletion != nil {
+		p.Data.OrganicVideoCompletion = organicVideoCompletion["value"].(float64)
+	}
+
+	paidVideoCompletion := p.getInsightsValue("post_video_complete_views_paid")
+	if paidVideoCompletion != nil {
+		p.Data.PaidVideoCompletion = paidVideoCompletion["value"].(float64)
+	}
+
+	p.Data.VideoCompletion = p.Data.PaidVideoCompletion + p.Data.OrganicVideoCompletion
+
+	lifetimeEngagedUsers := p.getInsightsValue("post_engaged_users")
+	if lifetimeEngagedUsers != nil {
+		p.Data.LifetimeEngagedUsers = lifetimeEngagedUsers["value"].(float64)
+	}
+
 	p.Data.OrganicImpressions = (p.Data.Impressions - p.Data.PaidImpressions)
 
 	reach := p.getInsightsValue("post_impressions_unique")
@@ -130,12 +147,12 @@ func (p *Post) ParseResults() {
 		p.Data.OrganicVideoViews = organicViews["value"].(float64)
 	}
 
-	p.Data.VideoViews = (p.Data.PaidVideoViews + p.Data.OrganicVideoViews)
+	videoViews := p.getInsightsValue("post_video_views")
+	if videoViews != nil {
+		p.Data.VideoViews = videoViews["value"].(float64)
+	}
 
-	uniquePaidViews := p.getInsightsValue("post_video_views_paid_unique")["value"].(float64)
-	uniqueOrganicViews := p.getInsightsValue("post_video_views_organic_unique")["value"].(float64)
-
-	p.Data.UniqueVideoViews = (uniquePaidViews + uniqueOrganicViews)
+	p.Data.UniqueVideoViews = p.getInsightsValue("post_video_views_unique")["value"].(float64)
 
 	minutesViewed := p.getInsightsValue("post_video_view_time")
 	if organicViews != nil {
@@ -149,6 +166,7 @@ func (p *Post) ParseResults() {
 		p.Data.AverageDuration = (total / 1000)
 	}
 
+	p.Data.VideoCompletionPercent = (p.Data.VideoCompletion / p.Data.VideoViews) * 100
 	p.Data.ReactionsTotal = p.getReactionsTotal(p.Results.TotalReactions)
 
 	p.Data.Reactions = make(map[string]float64)
@@ -160,12 +178,9 @@ func (p *Post) ParseResults() {
 
 	p.Data.Shares = p.getShares()
 
-	totalClicks := p.getAdInsightsValue("clicks")
+	totalClicks := p.getInsightsValue("post_consumptions")
 	if totalClicks != nil {
-		float64Value, err := strconv.ParseFloat(totalClicks.(string), 64)
-		if err == nil {
-			p.Data.Clicks = float64Value
-		}
+		p.Data.Clicks = totalClicks["value"].(float64)
 	}
 
 	totalSpend := p.getAdInsightsValue("spend")
@@ -173,21 +188,13 @@ func (p *Post) ParseResults() {
 		p.Data.Spend = totalSpend.(float64)
 	}
 
-	uniquePeopleEngaged := p.getAdInsightsValue("total_unique_actions")
-	if uniquePeopleEngaged != nil {
-		float64Value, err := strconv.ParseFloat(uniquePeopleEngaged.(string), 64)
-		if err == nil {
-			p.Data.UniquePeopleEngaged = float64Value
-		}
-	}
-
 	p.Data.Actions = p.Data.ReactionsTotal + p.Data.Comments + p.Data.Shares + p.Data.Clicks
 	if p.Data.Actions > 0 && p.Data.UniqueVideoViews > 0 {
 		p.Data.EngagementPercentPeopleViewed = (p.Data.Actions / p.Data.UniqueVideoViews) * 100
 	}
 
-	if p.Data.VideoViews > 0 && p.Data.Impressions > 0 {
-		p.Data.ViewRate = (p.Data.VideoViews / p.Data.Impressions) * 100
+	if p.Data.UniqueVideoViews > 0 && p.Data.Reach > 0 {
+		p.Data.ViewRate = (p.Data.UniqueVideoViews / p.Data.Reach) * 100
 	}
 
 	if p.Data.OrganicVideoViews > 0 || p.Data.PaidVideoViews > 0 {
@@ -246,10 +253,20 @@ func (p Post) getInsightsValue(key string) map[string]interface{} {
 }
 
 func (p Post) getShares() float64 {
-	data := p.Results.Engagement[1].Get("data")
+	queryBase := "data.0.unique_actions"
+	data := p.Results.AdInsights.Get(queryBase)
 	slice := reflect.ValueOf(data)
 
-	return float64(slice.Len())
+	for i := 0; i < slice.Len(); i++ {
+		query := fmt.Sprintf("%s.%d.action_type", queryBase, i)
+		actionType := p.Results.AdInsights.Get(query)
+
+		if actionType == "post" {
+			query := fmt.Sprintf("%s.%d.value", queryBase, i)
+			return p.Results.AdInsights.Get(query).(float64)
+		}
+	}
+	return 0
 }
 
 func (p Post) getAdInsightsValue(key string) interface{} {

@@ -11,6 +11,10 @@ type (
 		PaidReach                     float64            `json:"paid_reach"`
 		OrganicReach                  float64            `json:"organic_reach"`
 		VideoViews                    float64            `json:"video_views"`
+		VideoCompletion               float64            `json:"video_completion"`
+		VideoCompletionPercent        float64            `json:"video_completion_percent"`
+		OrganicVideoCompletion        float64            `json:"orgnaic_video_completion"`
+		PaidVideoCompletion           float64            `json:"paid_video_completion"`
 		PaidVideoViews                float64            `json:"paid_video_views"`
 		OrganicVideoViews             float64            `json:"organic_video_views"`
 		UniqueVideoViews              float64            `json:"unique_video_views"`
@@ -21,12 +25,12 @@ type (
 		Comments                      float64            `json:"comments"`
 		Shares                        float64            `json:"shares"`
 		Clicks                        float64            `json:"clicks"`
-		UniquePeopleEngaged           float64            `json:"unique_people_engaged"`
 		Spend                         float64            `json:"spend"`
 		VideoViewCost                 float64            `json:"video_view_cost"`
 		Actions                       float64            `json:"actions"`
 		EngagementPercentPeopleViewed float64            `json:"engagement_percent_people_viewed"`
 		ViewRate                      float64            `json:"view_rate"`
 		AudienceSplit                 AudienceSplit      `json:"audience_split"`
+		LifetimeEngagedUsers          float64            `json:"lifetime_engaged_users"`
 	}
 )
