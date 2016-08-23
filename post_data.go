@@ -13,7 +13,7 @@ type (
 		VideoViews                    float64            `json:"video_views"`
 		VideoCompletion               float64            `json:"video_completion"`
 		VideoCompletionPercent        float64            `json:"video_completion_percent"`
-		OrganicVideoCompletion        float64            `json:"orgnaic_video_completion"`
+		OrganicVideoCompletion        float64            `json:"organic_video_completion"`
 		PaidVideoCompletion           float64            `json:"paid_video_completion"`
 		PaidVideoViews                float64            `json:"paid_video_views"`
 		OrganicVideoViews             float64            `json:"organic_video_views"`
