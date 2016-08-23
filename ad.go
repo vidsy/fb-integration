@@ -44,7 +44,7 @@ func (a *Ad) CreateBatchParams() facebookLib.Params {
 func (a *Ad) CreateInsightParams() facebookLib.Params {
 	return facebookLib.Params{
 		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s/insights?fields=clicks,total_unique_actions,spend&date_preset=lifetime", a.ID),
+		"relative_url": fmt.Sprintf("%s/insights?fields=unique_actions,reach,spend&date_preset=lifetime", a.ID),
 	}
 }
 
