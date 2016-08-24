@@ -89,7 +89,6 @@ func (p Post) GenerateTotalReactionsParams() facebookLib.Params {
 func (p *Post) ParseResults() {
 	p.Data = &PostData{}
 
-	//Sampled people reached
 	sampledPeopleReached := p.getAdInsightsValue("reach")
 	if sampledPeopleReached != nil {
 		float64Value, err := strconv.ParseFloat(sampledPeopleReached.(string), 64)
