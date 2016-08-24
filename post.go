@@ -110,7 +110,6 @@ func (p *Post) ParseResults() {
 
 	p.Data.PeopleReachedOrganic = (p.Data.PeopleReached - p.Data.PeopleReachedPaid)
 
-	//Engagement rate & reactions
 	p.Data.Reactions = p.getActionTypeTotal("like")
 
 	p.Data.ReactionsBreakdown = make(map[string]float64)
@@ -137,16 +136,13 @@ func (p *Post) ParseResults() {
 		p.Data.EngagementRate = (((p.Data.PostConsumptions + p.Data.PostEngagements) / p.Data.PeopleReached) * 100)
 	}
 
-	//Demographic
 	p.Data.Demographic = p.generateDemographic()
 
-	//Paid Reach
 	paidReach := p.getInsightsValue("post_impressions_paid_unique")
 	if paidReach != nil {
 		p.Data.PaidReach = paidReach["value"].(float64)
 	}
 
-	//Video Views
 	videoViews := p.getInsightsValue("post_video_views")
 	if videoViews != nil {
 		p.Data.VideoViews = videoViews["value"].(float64)
@@ -162,15 +158,12 @@ func (p *Post) ParseResults() {
 		p.Data.VideoViewsPaid = videoViewsPaid["value"].(float64)
 	}
 
-	//UniqueViewers
 	p.Data.UniqueViewers = p.getInsightsValue("post_video_views_unique")["value"].(float64)
 
-	//View rate
 	if p.Data.UniqueViewers > 0 && p.Data.PeopleReached > 0 {
 		p.Data.ViewRate = (p.Data.UniqueViewers / p.Data.PeopleReached) * 100
 	}
 
-	//Video completion
 	viewsToNinetyFivePercentCompleteOrganic := p.getInsightsValue("post_video_complete_views_organic")
 	if viewsToNinetyFivePercentCompleteOrganic != nil {
 		p.Data.ViewsToNinetyFivePercentCompleteOrganic = viewsToNinetyFivePercentCompleteOrganic["value"].(float64)
@@ -183,30 +176,25 @@ func (p *Post) ParseResults() {
 
 	p.Data.ViewsToNinetyFivePercentComplete = p.Data.ViewsToNinetyFivePercentCompletePaid + p.Data.ViewsToNinetyFivePercentCompleteOrganic
 
-	//Percent Views complete
 	p.Data.PercentViewsCompleted = (p.Data.ViewsToNinetyFivePercentComplete / p.Data.VideoViews) * 100
 
-	//Average duration watched
 	averageDurationWatched := p.getInsightsValue("post_video_avg_time_watched")
 	if averageDurationWatched != nil {
 		total := averageDurationWatched["value"].(float64)
 		p.Data.AverageDurationWatched = (total / 1000)
 	}
 
-	//Overall Mintutes Viewed
 	overallMinutesViewed := p.getInsightsValue("post_video_view_time")
 	if overallMinutesViewed != nil {
 		total := overallMinutesViewed["value"].(float64)
 		p.Data.OverallMinutesViewed = ((total / 1000) / 60)
 	}
 
-	//Spend
 	totalSpend := p.getAdInsightsValue("spend")
 	if totalSpend != nil {
 		p.Data.Spend = totalSpend.(float64)
 	}
 
-	//Video View Cost
 	if p.Data.VideoViewsOrganic > 0 || p.Data.VideoViewsPaid > 0 {
 		p.Data.VideoViewCost = p.Data.Spend / (p.Data.VideoViewsOrganic + p.Data.VideoViewsPaid)
 	}
