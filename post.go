@@ -189,8 +189,8 @@ func (p *Post) ParseResults() {
 	}
 
 	p.Data.Actions = p.Data.ReactionsTotal + p.Data.Comments + p.Data.Shares + p.Data.Clicks
-	if p.Data.Actions > 0 && p.Data.UniqueVideoViews > 0 {
-		p.Data.EngagementPercentPeopleViewed = (p.Data.Actions / p.Data.UniqueVideoViews) * 100
+	if p.Data.Actions > 0 && p.Data.Reach > 0 {
+		p.Data.EngagementRate = (p.Data.Actions / p.Data.Reach) * 100
 	}
 
 	if p.Data.UniqueVideoViews > 0 && p.Data.Reach > 0 {

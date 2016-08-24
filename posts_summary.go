@@ -5,26 +5,16 @@ import "encoding/json"
 type (
 	// PostsSummary comment pending
 	PostsSummary struct {
-		TotalImpressions                   float64            `json:"total_impressions"`
-		TotalPaidImpressions               float64            `json:"total_paid_impressions"`
-		TotalOrganicImpressions            float64            `json:"total_organic_impressions"`
-		TotalReach                         float64            `json:"total_reach"`
-		TotalPaidReach                     float64            `json:"total_paid_reach"`
-		TotalOrganicReach                  float64            `json:"total_organic_reach"`
-		TotalVideoViews                    float64            `json:"total_video_views"`
-		TotalPaidVideoViews                float64            `json:"total_paid_video_views"`
-		TotalOrganicVideoViews             float64            `json:"total_organic_video_views"`
-		TotalUniqueVideoViews              float64            `json:"total_unique_video_views"`
-		TotalMinutesViewed                 float64            `json:"total_minutes_viewed"`
-		TotalVideosUsed                    int                `json:"total_videos_used"`
-		ReactionsTotal                     float64            `json:"reactions_total"`
-		Reactions                          map[string]float64 `json:"reactions"`
-		TotalClicks                        float64            `json:"total_clicks"`
-		TotalUniquePeopleEngaged           float64            `json:"total_unique_people_engaged"`
-		TotalActions                       float64            `json:"total_actions"`
-		TotalEngagementPercentPeopleViewed float64            `json:"total_engagement_percent_people_viewed"`
-		TotalViewRate                      float64            `json:"total_view_rate"`
-		TopVideoID                         string             `json:"top_video_id"`
+		VideosPosted      int     `json:"videos_posted"`
+		CampaignReach     float64 `json:"campaign_reach"`
+		CampaignViews     float64 `json:"campaign_views"`
+		MinutesViewed     float64 `json:"minutes_viewed"`
+		UnqiueViewers     float64 `json:"unqiue_viewers"`
+		OverallViewRate   float64 `json:"overall_view_rate"`
+		TotalEngagements  float64 `json:"total_engagements"`
+		EngagementRate    float64 `json:"engagement_rate"`
+		TopViewedVideoID  string  `json:"top_viewed_video_id"`
+		TopEngagedVideoID string  `json:"top_engaged_video_id"`
 	}
 )
 
@@ -48,21 +38,24 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 		ps.TotalMinutesViewed += post.Data.MinutesViewed
 		ps.ReactionsTotal += post.Data.ReactionsTotal
 		ps.TotalActions += post.Data.Actions
-		ps.TotalEngagementPercentPeopleViewed += post.Data.EngagementPercentPeopleViewed
-		ps.TotalViewRate += post.Data.ViewRate
 
 		for _, reactionType := range post.ReactionTypes() {
 			ps.Reactions[reactionType] += post.Data.Reactions[reactionType]
 		}
 	}
 
-	ps.TotalEngagementPercentPeopleViewed = calculateAverage(ps.TotalEngagementPercentPeopleViewed, len(posts))
-	ps.TotalViewRate = calculateAverage(ps.TotalViewRate, len(posts))
+	ps.EngagementRate = calculateEngagementRate(ps.TotalActions, ps.TotalReach)
+	ps.TotalViewRate = calculateViewRate(ps.TotalReach, ps.TotalUniqueVideoViews)
 
 	ps.TotalVideosUsed = calculateVideosUsed(posts)
-	ps.TopVideoID = findTopVideoFromEngagementPercentPeopleViewedVideo(posts)
+	ps.TopVideoID = findTopVideoFromEngagementRate(posts)
 
 	return ps
+}
+
+// calculateViewRate comment pending
+func calculateViewRate(totalReach float64, totalUniqueVideoViews float64) float64 {
+	return (totalUniqueVideoViews / totalReach) * 100
 }
 
 // ToJSON comment pending
@@ -91,11 +84,11 @@ func calculateVideosUsed(posts []*Post) int {
 	return len(videosUsed)
 }
 
-func findTopVideoFromEngagementPercentPeopleViewedVideo(posts []*Post) string {
+func findTopVideoFromEngagementRate(posts []*Post) string {
 	topPost := posts[0]
 
 	for _, post := range posts {
-		if post.Data.EngagementPercentPeopleViewed > topPost.Data.EngagementPercentPeopleViewed {
+		if post.Data.EngagementRate > topPost.Data.EngagementRate {
 			topPost = post
 		}
 	}
