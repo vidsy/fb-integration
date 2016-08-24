@@ -41,7 +41,7 @@ func (p Post) GenerateCommentsParams() facebookLib.Params {
 func (p Post) GenerateInsightParams() facebookLib.Params {
 	return facebookLib.Params{
 		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s/insights/post_video_views_unique,post_engaged_users,post_video_complete_views_organic,post_video_complete_views_paid,post_consumptions,post_impressions,post_impressions_paid,post_impressions_unique,post_impressions_paid_unique,post_video_views,post_video_views_paid,post_video_views_organic,post_video_view_time,post_video_avg_time_watched?period=lifetime&limit=20", p.ID),
+		"relative_url": fmt.Sprintf("%s/insights/post_video_views_unique,post_engaged_users,post_video_complete_views_organic,post_video_complete_views_paid,post_consumptions,post_impressions,post_impressions_paid,post_impressions_unique,post_impressions_paid_unique,post_video_views,post_video_views_paid,post_video_views_organic,post_video_view_time,post_video_avg_time_watched,post_stories_by_action_type?period=lifetime&limit=20", p.ID),
 	}
 }
 
@@ -108,17 +108,18 @@ func (p *Post) ParseResults() {
 		p.Data.PeopleReachedPaid = peopleReachedPaid["value"].(float64)
 	}
 
-	p.Data.PeopleReachedPaid = (p.Data.PeopleReached - p.Data.PeopleReachedPaid)
+	p.Data.PeopleReachedOrganic = (p.Data.PeopleReached - p.Data.PeopleReachedPaid)
 
 	//Engagement rate & reactions
-	p.Data.Reactions = p.getReactionsTotal(p.Results.TotalReactions)
+	p.Data.Reactions = p.getActionTypeTotal("like")
+
 	p.Data.ReactionsBreakdown = make(map[string]float64)
 	for i, reactionType := range p.ReactionTypes() {
 		p.Data.ReactionsBreakdown[reactionType] = p.getReactionsTotal(p.Results.ReactionBreakdown[i])
 	}
 
-	p.Data.Comments = p.getComments()
-	p.Data.Shares = p.getShares()
+	p.Data.Comments = p.getActionTypeTotal("comment")
+	p.Data.Shares = p.getActionTypeTotal("share")
 
 	postConsumptions := p.getInsightsValue("post_consumptions")
 	if postConsumptions != nil {
@@ -286,6 +287,13 @@ func (p Post) getAdInsightsValue(key string) interface{} {
 	}
 
 	return nil
+}
+
+func (p Post) getActionTypeTotal(actionType string) float64 {
+	postStories := p.getInsightsValue("post_stories_by_action_type")
+	reflectedMap := reflect.ValueOf(postStories["value"])
+	valuesMap := reflectedMap.Interface().(map[string]interface{})
+	return valuesMap[actionType].(float64)
 }
 
 func (p Post) getReactionsTotal(result *facebookLib.Result) float64 {

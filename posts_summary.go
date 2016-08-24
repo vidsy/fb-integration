@@ -21,41 +21,58 @@ type (
 // NewPostsSummary comment pending
 func NewPostsSummary(posts []*Post) PostsSummary {
 	var ps PostsSummary
+	var totalUniqueViewers float64
+	var totalPeopleReached float64
+	var totalPostConsumptions float64
+	var totalPostEngagements float64
 
-	ps.Reactions = make(map[string]float64)
+	topViewedVideoPost := posts[0]
+	topEngagedVideoPost := posts[0]
+
+	videosUsed := make(map[string]*interface{})
 
 	for _, post := range posts {
-		ps.TotalImpressions += post.Data.Impressions
-		ps.TotalPaidImpressions += post.Data.PaidImpressions
-		ps.TotalOrganicImpressions += post.Data.OrganicImpressions
-		ps.TotalReach += post.Data.Reach
-		ps.TotalPaidReach += post.Data.PaidReach
-		ps.TotalOrganicReach += post.Data.OrganicReach
-		ps.TotalVideoViews += post.Data.VideoViews
-		ps.TotalPaidVideoViews += post.Data.PaidVideoViews
-		ps.TotalOrganicVideoViews += post.Data.OrganicVideoViews
-		ps.TotalUniqueVideoViews += post.Data.UniqueVideoViews
-		ps.TotalMinutesViewed += post.Data.MinutesViewed
-		ps.ReactionsTotal += post.Data.ReactionsTotal
-		ps.TotalActions += post.Data.Actions
+		ps.CampaignReach += post.Data.PeopleReached
+		ps.CampaignViews += post.Data.VideoViews
+		ps.MinutesViewed += post.Data.OverallMinutesViewed
+		ps.UnqiueViewers += post.Data.UniqueViewers
+		ps.TotalEngagements += post.Data.PostConsumptions + post.Data.PostEngagements
 
-		for _, reactionType := range post.ReactionTypes() {
-			ps.Reactions[reactionType] += post.Data.Reactions[reactionType]
+		totalUniqueViewers += post.Data.UniqueViewers
+		totalPeopleReached += post.Data.PeopleReached
+		totalPostConsumptions += post.Data.PostConsumptions
+		totalPostEngagements += post.Data.PostEngagements
+
+		if post.Data.VideoViews > topViewedVideoPost.Data.VideoViews {
+			topViewedVideoPost = post
+		}
+
+		if post.Data.EngagementRate > topEngagedVideoPost.Data.EngagementRate {
+			topEngagedVideoPost = post
+		}
+
+		if _, exists := videosUsed[post.ObjectID]; !exists {
+			videosUsed[post.ObjectID] = nil
 		}
 	}
 
-	ps.EngagementRate = calculateEngagementRate(ps.TotalActions, ps.TotalReach)
-	ps.TotalViewRate = calculateViewRate(ps.TotalReach, ps.TotalUniqueVideoViews)
-
-	ps.TotalVideosUsed = calculateVideosUsed(posts)
-	ps.TopVideoID = findTopVideoFromEngagementRate(posts)
+	ps.OverallViewRate = calculateViewRate(totalUniqueViewers, totalPeopleReached)
+	ps.EngagementRate = calculateEngagementRate(totalPostConsumptions, totalPostEngagements, totalPeopleReached)
+	ps.TopEngagedVideoID = topEngagedVideoPost.ObjectID
+	ps.TopViewedVideoID = topViewedVideoPost.ObjectID
+	ps.VideosPosted = len(videosUsed)
 
 	return ps
 }
 
 // calculateViewRate comment pending
-func calculateViewRate(totalReach float64, totalUniqueVideoViews float64) float64 {
-	return (totalUniqueVideoViews / totalReach) * 100
+func calculateViewRate(totalUniqueVideoViews float64, totalPeopleReached float64) float64 {
+	return (totalUniqueVideoViews / totalPeopleReached) * 100
+}
+
+// calculateEngagementRate comment pending
+func calculateEngagementRate(totalPostConsumptions float64, totalPostEngagements float64, totalPeopleReached float64) float64 {
+	return ((totalPostConsumptions + totalPostEngagements) / totalPeopleReached) * 100
 }
 
 // ToJSON comment pending
@@ -68,11 +85,7 @@ func (p *PostsSummary) ToJSON() (string, error) {
 	return string(b), nil
 }
 
-func calculateAverage(total float64, divisor int) float64 {
-	return total / float64(divisor)
-}
-
-func calculateVideosUsed(posts []*Post) int {
+func calculateVideosPosted(posts []*Post) int {
 	videosUsed := make(map[string]*interface{})
 
 	for _, post := range posts {
@@ -82,17 +95,4 @@ func calculateVideosUsed(posts []*Post) int {
 	}
 
 	return len(videosUsed)
-}
-
-func findTopVideoFromEngagementRate(posts []*Post) string {
-	topPost := posts[0]
-
-	for _, post := range posts {
-		if post.Data.EngagementRate > topPost.Data.EngagementRate {
-			topPost = post
-		}
-	}
-
-	return topPost.ObjectID
-
 }

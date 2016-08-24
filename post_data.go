@@ -12,7 +12,7 @@ type (
 		PostConsumptions     float64            `json:"post_consumptions"`
 		PostEngagements      float64            `json:"post_engagements"`
 		Reactions            float64            `json:"reactions"`
-		ReactionsBreakdown   map[string]float64 `json:"reactions"`
+		ReactionsBreakdown   map[string]float64 `json:"reactions_breakdown"`
 		Comments             float64            `json:"comments"`
 		Shares               float64            `json:"shares"`
 		Demographic          DemographicSplit   `json:"demographic"`
