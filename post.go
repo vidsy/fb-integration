@@ -88,6 +88,19 @@ func (p Post) GenerateTotalReactionsParams() facebookLib.Params {
 // ParseResults comment pending
 func (p *Post) ParseResults() {
 	p.Data = &PostData{}
+
+	peopleReached := p.getInsightsValue("post_impressions_unique")
+	if peopleReached != nil {
+		p.Data.PeopleReached = peopleReached["value"].(float64)
+	}
+
+	peopleReachedPaid := p.getInsightsValue("post_impressions_paid_unique")
+	if peopleReachedPaid != nil {
+		p.Data.PeopleReachedPaid = peopleReachedPaid["value"].(float64)
+	}
+
+	p.Data.PeopleReachedPaid = (p.Data.PeopleReached - p.Data.PeopleReachedPaid)
+
 	impressions := p.getInsightsValue("post_impressions")
 	if impressions != nil {
 		p.Data.Impressions = impressions["value"].(float64)
