@@ -31,59 +31,39 @@ func NewPostFromResult(result facebookLib.Result) Post {
 }
 
 // GenerateCommentsParams comment pending
-func (p Post) GenerateCommentsParams() facebookLib.Params {
-	return facebookLib.Params{
-		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s/comments?summary=true&filter=stream", p.ID),
-	}
+func (p Post) GenerateCommentsParams() BatchParams {
+	return NewBatchParams(fmt.Sprintf("%s/comments?summary=true&filter=stream", p.ID))
 }
 
 // GenerateInsightParams comment pending
-func (p Post) GenerateInsightParams() facebookLib.Params {
-	return facebookLib.Params{
-		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s/insights/post_video_views_unique,post_engaged_users,post_video_complete_views_organic,post_video_complete_views_paid,post_consumptions,post_impressions,post_impressions_paid,post_impressions_unique,post_impressions_paid_unique,post_video_views,post_video_views_paid,post_video_views_organic,post_video_view_time,post_video_avg_time_watched,post_stories_by_action_type?period=lifetime&limit=20", p.ID),
-	}
+func (p Post) GenerateInsightParams() BatchParams {
+	return NewBatchParams(fmt.Sprintf("%s/insights/post_video_views_unique,post_engaged_users,post_video_complete_views_organic,post_video_complete_views_paid,post_consumptions,post_impressions,post_impressions_paid,post_impressions_unique,post_impressions_paid_unique,post_video_views,post_video_views_paid,post_video_views_organic,post_video_view_time,post_video_avg_time_watched,post_stories_by_action_type?period=lifetime&limit=20", p.ID))
 }
 
 // GenerateParams comments pending
-func (p *Post) GenerateParams() facebookLib.Params {
-	return facebookLib.Params{
-		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"),
-	}
+func (p *Post) GenerateParams() BatchParams {
+	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"))
 }
 
 // GenerateReactionBreakdownParams comment pending
-func (p Post) GenerateReactionBreakdownParams() []facebookLib.Params {
-	var params []facebookLib.Params
+func (p Post) GenerateReactionBreakdownParams() []BatchParams {
+	var params []BatchParams
 
 	for _, reaction := range p.ReactionTypes() {
-		params = append(params,
-			facebookLib.Params{
-				"method":       facebookLib.GET,
-				"relative_url": fmt.Sprintf("%s/reactions?limit=0&summary=total_count&type=%s", p.ID, reaction),
-			},
-		)
+		params = append(params, NewBatchParams(fmt.Sprintf("%s/reactions?limit=0&summary=total_count&type=%s", p.ID, reaction)))
 	}
 
 	return params
 }
 
 // GenerateSharesParams comment pending
-func (p Post) GenerateSharesParams() facebookLib.Params {
-	return facebookLib.Params{
-		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s/sharedposts", p.ID),
-	}
+func (p Post) GenerateSharesParams() BatchParams {
+	return NewBatchParams(fmt.Sprintf("%s/sharedposts", p.ID))
 }
 
 // GenerateTotalReactionsParams comment pending
-func (p Post) GenerateTotalReactionsParams() facebookLib.Params {
-	return facebookLib.Params{
-		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s/reactions?limit=0&summary=total_count", p.ID),
-	}
+func (p Post) GenerateTotalReactionsParams() BatchParams {
+	return NewBatchParams(fmt.Sprintf("%s/reactions?limit=0&summary=total_count", p.ID))
 }
 
 // ParseResults comment pending

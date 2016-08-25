@@ -22,10 +22,15 @@ func NewAPI() API {
 }
 
 // Batch comment pending
-func (f *API) Batch(params ...facebookLib.Params) ([]*APIResponse, *Error) {
+func (f *API) Batch(params ...BatchParams) ([]*APIResponse, *Error) {
 	var apiResponses []*APIResponse
+	var fbBatchParams []facebookLib.Params
 
-	results, err := f.Session.BatchApi(params...)
+	for _, param := range params {
+		fbBatchParams = append(fbBatchParams, param.ToFBParams())
+	}
+
+	results, err := f.Session.BatchApi(fbBatchParams...)
 
 	if err != nil {
 		return []*APIResponse{}, NewError(err)
@@ -46,8 +51,8 @@ func (f *API) Batch(params ...facebookLib.Params) ([]*APIResponse, *Error) {
 }
 
 // Get comment pending
-func (f *API) Get(path string, params facebookLib.Params) (*APIResponse, *Error) {
-	results, err := f.Session.Get(path, params)
+func (f *API) Get(params Params) (*APIResponse, *Error) {
+	results, err := f.Session.Get(params.Endpoint, params.ToFBParams())
 
 	if err != nil {
 		wrappedError := NewError(err)

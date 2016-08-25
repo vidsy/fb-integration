@@ -48,6 +48,8 @@ func (as *DemographicSplit) Push(demographicSplitItem DemographicSplitItem) {
 func (as DemographicSplit) MarshalJSON() ([]byte, error) {
 	demographicSplit := map[string]map[string]float64{}
 
+	fmt.Sprintf("%s", as.Data)
+
 	for _, demographicSplitItem := range as.Data {
 		_, exists := demographicSplit[demographicSplitItem.AgeRange]
 

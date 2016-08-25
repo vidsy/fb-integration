@@ -36,34 +36,21 @@ func NewAd(result *facebookLib.Result) Ad {
 }
 
 // CreateBatchParams comment pending
-func (a *Ad) CreateBatchParams() facebookLib.Params {
-	return facebookLib.Params{
-		"method":       facebookLib.GET,
-		"relative_url": a.Creative.ID,
-		"fields":       "object_id,object_type,effective_object_story_id",
-	}
+func (a *Ad) CreateBatchParams() BatchParams {
+	return NewBatchParams(fmt.Sprintf("%s?fields=object_id,object_type,effective_object_story_id", a.Creative.ID))
 }
 
 // CreateInsightParams comment pending
-func (a *Ad) CreateInsightParams() facebookLib.Params {
-	return facebookLib.Params{
-		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s/insights?fields=unique_actions,reach,spend&date_preset=lifetime", a.ID),
-	}
+func (a *Ad) CreateInsightParams() BatchParams {
+	return NewBatchParams(fmt.Sprintf("%s/insights?fields=unique_actions,reach,spend&date_preset=lifetime", a.ID))
 }
 
 // CreateBreakdownInsightParams comment pending
-func (a *Ad) CreateBreakdownInsightParams() facebookLib.Params {
-	return facebookLib.Params{
-		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s/insights?fields=reach&date_preset=lifetime&breakdowns=age,gender", a.ID),
-	}
+func (a *Ad) CreateBreakdownInsightParams() BatchParams {
+	return NewBatchParams(fmt.Sprintf("%s/insights?fields=reach&date_preset=lifetime&breakdowns=age,gender", a.ID))
 }
 
 // CreateTargetingParams comment pending
-func (a *Ad) CreateTargetingParams() facebookLib.Params {
-	return facebookLib.Params{
-		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s?fields=targeting&date_preset=lifetime", a.AdsetID),
-	}
+func (a *Ad) CreateTargetingParams() BatchParams {
+	return NewBatchParams(fmt.Sprintf("%s?fields=targeting&date_preset=lifetime", a.AdsetID))
 }
