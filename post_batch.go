@@ -48,6 +48,18 @@ func (p PostBatch) EngagementParams() []facebookLib.Params {
 	return params
 }
 
+// TargetingParams comment pending
+func (p PostBatch) TargetingParams() []facebookLib.Params {
+	var params []facebookLib.Params
+
+	for i := 0; i < len(p.Posts); i++ {
+		ad := Ad{ID: p.Posts[i].AdID, AdsetID: p.Posts[i].AdsetID}
+		params = append(params, ad.CreateTargetingParams())
+	}
+
+	return params
+}
+
 // InsightParams comment pending
 func (p PostBatch) InsightParams() []facebookLib.Params {
 	var params []facebookLib.Params

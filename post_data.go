@@ -16,6 +16,7 @@ type (
 		Comments                                float64            `json:"comments"`
 		Shares                                  float64            `json:"shares"`
 		Demographic                             DemographicSplit   `json:"demographic"`
+		Targeting                               AdTargeting        `json:"ad_targeting"`
 		PaidReach                               float64            `json:"paid_reach"`
 		VideoViews                              float64            `json:"video_views"`
 		VideoViewsOrganic                       float64            `json:"video_views_organic"`
