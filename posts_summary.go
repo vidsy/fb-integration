@@ -11,7 +11,7 @@ type (
 		MinutesViewed     float64 `json:"minutes_viewed"`
 		UnqiueViewers     float64 `json:"unqiue_viewers"`
 		OverallViewRate   float64 `json:"overall_view_rate"`
-		TotalEngagements  float64 `json:"total_engagements"`
+		TotalEngagement   float64 `json:"total_engagement"`
 		EngagementRate    float64 `json:"engagement_rate"`
 		TopViewedVideoID  string  `json:"top_viewed_video_id"`
 		TopEngagedVideoID string  `json:"top_engaged_video_id"`
@@ -36,7 +36,7 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 		ps.CampaignViews += post.Data.VideoViews
 		ps.MinutesViewed += post.Data.OverallMinutesViewed
 		ps.UnqiueViewers += post.Data.UniqueViewers
-		ps.TotalEngagements += post.Data.PostConsumptions + post.Data.PostEngagements
+		ps.TotalEngagement += post.Data.PostConsumptions + post.Data.PostEngagements
 
 		totalUniqueViewers += post.Data.UniqueViewers
 		totalPeopleReached += post.Data.PeopleReached
