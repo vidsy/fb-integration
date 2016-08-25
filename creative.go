@@ -25,11 +25,8 @@ func NewCreativeFromResult(result facebookLib.Result) Creative {
 }
 
 // GenerateParams comments pending
-func (c *Creative) GenerateParams() facebookLib.Params {
-	return facebookLib.Params{
-		"method":       facebookLib.GET,
-		"relative_url": fmt.Sprintf("%s?fields=%s", c.ID, "object_id,object_type,effective_object_story_id"),
-	}
+func (c *Creative) GenerateParams() BatchParams {
+	return NewBatchParams(fmt.Sprintf("%s?fields=%s", c.ID, "object_id,object_type,effective_object_story_id"))
 }
 
 // IsVideo comment pending

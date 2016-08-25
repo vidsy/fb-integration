@@ -1,7 +1,5 @@
 package fbintegration
 
-import facebookLib "github.com/huandu/facebook"
-
 type (
 	// PostBatch comment pending
 	PostBatch struct {
@@ -37,8 +35,8 @@ func GeneratePostBatchSlices(posts []*Post, size int) []PostBatch {
 }
 
 // EngagementParams comment pending
-func (p PostBatch) EngagementParams() []facebookLib.Params {
-	var params []facebookLib.Params
+func (p PostBatch) EngagementParams() []BatchParams {
+	var params []BatchParams
 
 	for i := 0; i < len(p.Posts); i++ {
 		params = append(params, p.Posts[i].GenerateCommentsParams())
@@ -49,8 +47,8 @@ func (p PostBatch) EngagementParams() []facebookLib.Params {
 }
 
 // TargetingParams comment pending
-func (p PostBatch) TargetingParams() []facebookLib.Params {
-	var params []facebookLib.Params
+func (p PostBatch) TargetingParams() []BatchParams {
+	var params []BatchParams
 
 	for i := 0; i < len(p.Posts); i++ {
 		ad := Ad{ID: p.Posts[i].AdID, AdsetID: p.Posts[i].AdsetID}
@@ -61,8 +59,8 @@ func (p PostBatch) TargetingParams() []facebookLib.Params {
 }
 
 // InsightParams comment pending
-func (p PostBatch) InsightParams() []facebookLib.Params {
-	var params []facebookLib.Params
+func (p PostBatch) InsightParams() []BatchParams {
+	var params []BatchParams
 
 	for i := 0; i < len(p.Posts); i++ {
 		params = append(params, p.Posts[i].GenerateInsightParams())
@@ -72,8 +70,8 @@ func (p PostBatch) InsightParams() []facebookLib.Params {
 }
 
 // ReactionBreakdownParams comment pending
-func (p PostBatch) ReactionBreakdownParams() []facebookLib.Params {
-	var params []facebookLib.Params
+func (p PostBatch) ReactionBreakdownParams() []BatchParams {
+	var params []BatchParams
 
 	for i := 0; i < len(p.Posts); i++ {
 		for _, p := range p.Posts[i].GenerateReactionBreakdownParams() {
@@ -85,8 +83,8 @@ func (p PostBatch) ReactionBreakdownParams() []facebookLib.Params {
 }
 
 // TotalReactionsParams comment pending
-func (p PostBatch) TotalReactionsParams() []facebookLib.Params {
-	var params []facebookLib.Params
+func (p PostBatch) TotalReactionsParams() []BatchParams {
+	var params []BatchParams
 
 	for i := 0; i < len(p.Posts); i++ {
 		params = append(params, p.Posts[i].GenerateTotalReactionsParams())
@@ -96,8 +94,8 @@ func (p PostBatch) TotalReactionsParams() []facebookLib.Params {
 }
 
 // TotalAdInsightsParams comment pending
-func (p PostBatch) TotalAdInsightsParams() []facebookLib.Params {
-	var params []facebookLib.Params
+func (p PostBatch) TotalAdInsightsParams() []BatchParams {
+	var params []BatchParams
 
 	for i := 0; i < len(p.Posts); i++ {
 		ad := Ad{ID: p.Posts[i].AdID}
@@ -108,8 +106,8 @@ func (p PostBatch) TotalAdInsightsParams() []facebookLib.Params {
 }
 
 // TotalAdInsightsBreakDownParams comment pending
-func (p PostBatch) TotalAdInsightsBreakDownParams() []facebookLib.Params {
-	var params []facebookLib.Params
+func (p PostBatch) TotalAdInsightsBreakDownParams() []BatchParams {
+	var params []BatchParams
 
 	for i := 0; i < len(p.Posts); i++ {
 		ad := Ad{ID: p.Posts[i].AdID}

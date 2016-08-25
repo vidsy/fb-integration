@@ -1,7 +1,7 @@
 package fbintegration
 
 import (
-	facebookLib "github.com/huandu/facebook"
+	"fmt"
 )
 
 type (
@@ -27,12 +27,12 @@ func NewBrandAds(adAccountID string, brandID int64, brandName string) BrandAds {
 }
 
 // GenerateParams comment pending
-func (ba *BrandAds) GenerateParams() facebookLib.Params {
-	return facebookLib.Params{
+func (ba *BrandAds) GenerateParams(adAccountID string) Params {
+	return NewParams(fmt.Sprintf("/act_%s/ads", adAccountID), map[string]interface{}{
 		"date_preset": "lifetime",
 		"limit":       40,
 		"fields":      "fields=id,creative{id, object_id},adset",
-	}
+	})
 }
 
 // Add comment pending

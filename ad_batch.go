@@ -1,9 +1,5 @@
 package fbintegration
 
-import (
-	facebookLib "github.com/huandu/facebook"
-)
-
 type (
 	// AdBatch comment pending
 	AdBatch struct {
@@ -12,8 +8,8 @@ type (
 )
 
 // CreativeParams comment pending
-func (a *AdBatch) CreativeParams() []facebookLib.Params {
-	var params []facebookLib.Params
+func (a *AdBatch) CreativeParams() []BatchParams {
+	var params []BatchParams
 
 	for i := 0; i < len(a.Ads); i++ {
 		params = append(params, a.Ads[i].Creative.GenerateParams())
@@ -23,8 +19,8 @@ func (a *AdBatch) CreativeParams() []facebookLib.Params {
 }
 
 // PostParams comment pending
-func (a *AdBatch) PostParams() []facebookLib.Params {
-	var params []facebookLib.Params
+func (a *AdBatch) PostParams() []BatchParams {
+	var params []BatchParams
 
 	for i := 0; i < len(a.Ads); i++ {
 		params = append(params, a.Ads[i].Post.GenerateParams())
