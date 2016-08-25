@@ -15,6 +15,7 @@ type (
 		Name     string       `facebook:"message" json:"name"`
 		ID       string       `facebook:"id"        json:"post_id"`
 		AdID     string       `json:"ad_id"`
+		AdsetID  string       `json:"adset_id"`
 		ObjectID string       `facebook:"object_id" json:"object_id"`
 		Results  *PostResults `json:"-"`
 		Data     *PostData    `json:"data,omitempty"`
@@ -136,6 +137,7 @@ func (p *Post) ParseResults() {
 	}
 
 	p.Data.Demographic = p.generateDemographic()
+	p.Data.Targeting = p.generateTargeting()
 
 	paidReach := p.getInsightsValue("post_impressions_paid_unique")
 	if paidReach != nil {
@@ -218,6 +220,10 @@ func (p *Post) ToJSON() (string, error) {
 
 func (p Post) generateDemographic() DemographicSplit {
 	return NewDemographicSplitFromResult(p.Results.AdBreakdownInsights, p.Data.SampledPeopleReached)
+}
+
+func (p Post) generateTargeting() AdTargeting {
+	return NewAdTargetingFromResult(p.Results.Targeting)
 }
 
 func (p Post) getComments() float64 {

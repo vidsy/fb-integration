@@ -7,6 +7,7 @@ import (
 type (
 	// PostResults comment pending
 	PostResults struct {
+		Targeting           *facebookLib.Result
 		Engagement          []*facebookLib.Result
 		Insights            *facebookLib.Result
 		AdInsights          *facebookLib.Result

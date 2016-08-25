@@ -9,6 +9,7 @@ type (
 	// Ad comment pending
 	Ad struct {
 		ID       string
+		AdsetID  string
 		Creative *Creative
 		Post     *Post
 	}
@@ -18,12 +19,15 @@ type (
 func NewAd(result *facebookLib.Result) Ad {
 	var id string
 	var creativeID string
+	var adsetID string
 
 	result.DecodeField("id", &id)
 	result.DecodeField("creative.id", &creativeID)
+	result.DecodeField("adset.id", &adsetID)
 
 	ad := Ad{
 		id,
+		adsetID,
 		&Creative{creativeID, "", ""},
 		&Post{},
 	}
@@ -48,10 +52,18 @@ func (a *Ad) CreateInsightParams() facebookLib.Params {
 	}
 }
 
-//CreateBreakdownInsightParams comment pending
+// CreateBreakdownInsightParams comment pending
 func (a *Ad) CreateBreakdownInsightParams() facebookLib.Params {
 	return facebookLib.Params{
 		"method":       facebookLib.GET,
 		"relative_url": fmt.Sprintf("%s/insights?fields=reach&date_preset=lifetime&breakdowns=age,gender", a.ID),
+	}
+}
+
+// CreateTargetingParams comment pending
+func (a *Ad) CreateTargetingParams() facebookLib.Params {
+	return facebookLib.Params{
+		"method":       facebookLib.GET,
+		"relative_url": fmt.Sprintf("%s?fields=targeting&date_preset=lifetime", a.AdsetID),
 	}
 }

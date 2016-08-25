@@ -31,7 +31,7 @@ func (ba *BrandAds) GenerateParams() facebookLib.Params {
 	return facebookLib.Params{
 		"date_preset": "lifetime",
 		"limit":       40,
-		"fields":      "fields=id,creative{id, object_id}",
+		"fields":      "fields=id,creative{id, object_id},adset",
 	}
 }
 
