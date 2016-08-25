@@ -27,7 +27,7 @@ func (f *API) Batch(params ...BatchParams) ([]*APIResponse, *Error) {
 	var fbBatchParams []facebookLib.Params
 
 	for _, param := range params {
-		fbBatchParams = append(fbBatchParams, param.ToFBParams())
+		fbBatchParams = append(fbBatchParams, param.ToFbParams())
 	}
 
 	results, err := f.Session.BatchApi(fbBatchParams...)
@@ -52,7 +52,7 @@ func (f *API) Batch(params ...BatchParams) ([]*APIResponse, *Error) {
 
 // Get comment pending
 func (f *API) Get(params Params) (*APIResponse, *Error) {
-	results, err := f.Session.Get(params.Endpoint, params.ToFBParams())
+	results, err := f.Session.Get(params.Endpoint, params.ToFbParams())
 
 	if err != nil {
 		wrappedError := NewError(err)

@@ -6,6 +6,7 @@ import (
 )
 
 type (
+	// Params comment pending
 	Params struct {
 		Endpoint string
 		Params   map[string]interface{}
@@ -18,15 +19,18 @@ type (
 	}
 )
 
+// NewParams comment pending
 func NewParams(endpoint string, params map[string]interface{}) Params {
 	return Params{endpoint, params}
 }
 
+// NewBatchParams comment pending
 func NewBatchParams(endpoint string) BatchParams {
 	return BatchParams{RelativeUrl: endpoint}
 }
 
-func (p BatchParams) ToFBParams() facebookLib.Params {
+// ToFbParams comment pending
+func (p BatchParams) ToFbParams() facebookLib.Params {
 	if p.Method == "" {
 		p.Method = "GET"
 	}
@@ -39,6 +43,7 @@ func (p BatchParams) ToFBParams() facebookLib.Params {
 	}
 }
 
-func (p Params) ToFBParams() facebookLib.Params {
+// ToFbParams comment pending
+func (p Params) ToFbParams() facebookLib.Params {
 	return facebookLib.MakeParams(p.Params)
 }
