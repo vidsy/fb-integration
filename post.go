@@ -280,7 +280,11 @@ func (p Post) getActionTypeTotal(actionType string) float64 {
 	postStories := p.getInsightsValue("post_stories_by_action_type")
 	reflectedMap := reflect.ValueOf(postStories["value"])
 	valuesMap := reflectedMap.Interface().(map[string]interface{})
-	return valuesMap[actionType].(float64)
+	value := valuesMap[actionType]
+	if value != nil {
+		return valuesMap[actionType].(float64)
+	}
+	return 0
 }
 
 func (p Post) getReactionsTotal(result *facebookLib.Result) float64 {
