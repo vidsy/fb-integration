@@ -1,4 +1,4 @@
-package: github.com/vidsy/fb-integration
+package: github.com/vidsy/fbintegration
 import:
 - package: github.com/huandu/facebook
 - package: github.com/pariz/gountries
