@@ -116,3 +116,14 @@ func (p PostBatch) TotalAdInsightsBreakDownParams() []BatchParams {
 
 	return params
 }
+
+// PostCreatedTimestampParams comment pending
+func (p PostBatch) PostCreatedTimestampParams() []BatchParams {
+	var params []BatchParams
+
+	for i := 0; i < len(p.Posts); i++ {
+		params = append(params, p.Posts[i].GeneratePostCreatedTimestampParams())
+	}
+
+	return params
+}
