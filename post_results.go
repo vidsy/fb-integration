@@ -14,5 +14,6 @@ type (
 		AdBreakdownInsights *facebookLib.Result
 		ReactionBreakdown   []*facebookLib.Result
 		TotalReactions      *facebookLib.Result
+		CreatedTimestamp    *facebookLib.Result
 	}
 )

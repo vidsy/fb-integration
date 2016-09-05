@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+	"time"
 
 	facebookLib "github.com/huandu/facebook"
 )
@@ -40,9 +41,14 @@ func (p Post) GenerateInsightParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s/insights/post_video_views_unique,post_engaged_users,post_video_complete_views_organic,post_video_complete_views_paid,post_consumptions,post_impressions,post_impressions_paid,post_impressions_unique,post_impressions_paid_unique,post_video_views,post_video_views_paid,post_video_views_organic,post_video_view_time,post_video_avg_time_watched,post_stories_by_action_type?period=lifetime&limit=20", p.ID))
 }
 
-// GenerateParams comments pending
+// GenerateParams comment pending
 func (p *Post) GenerateParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"))
+}
+
+// GeneratePostCreatedTimestampParams comment pending
+func (p *Post) GeneratePostCreatedTimestampParams() BatchParams {
+	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "created_time"))
 }
 
 // GenerateReactionBreakdownParams comment pending
@@ -179,6 +185,11 @@ func (p *Post) ParseResults() {
 	if p.Data.VideoViewsOrganic > 0 || p.Data.VideoViewsPaid > 0 {
 		p.Data.VideoViewCost = p.Data.Spend / (p.Data.VideoViewsOrganic + p.Data.VideoViewsPaid)
 	}
+
+	createdTimestamp, err := p.getCreatedTimestamp()
+	if err == nil {
+		p.Data.CreatedTimestamp = createdTimestamp
+	}
 }
 
 // ReactionTypes comment pending
@@ -208,6 +219,13 @@ func (p Post) generateTargeting() AdTargeting {
 
 func (p Post) getComments() float64 {
 	return p.Results.Engagement[0].Get("summary.total_count").(float64)
+}
+
+func (p Post) getCreatedTimestamp() (time.Time, error) {
+	layout := "2006-01-02T15:04:05-0700"
+	t := p.Results.CreatedTimestamp.Get("created_time")
+
+	return time.Parse(layout, t.(string))
 }
 
 func (p Post) getInsightsValue(key string) map[string]interface{} {

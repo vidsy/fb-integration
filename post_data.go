@@ -1,5 +1,7 @@
 package fbintegration
 
+import "time"
+
 type (
 	// PostData comment pending
 	PostData struct {
@@ -31,5 +33,6 @@ type (
 		OverallMinutesViewed                    float64            `json:"overall_minutes_viewed"`
 		Spend                                   float64            `json:"spend"`
 		VideoViewCost                           float64            `json:"video_view_cost"`
+		CreatedTimestamp                        time.Time          `json:"created_timestamp"`
 	}
 )

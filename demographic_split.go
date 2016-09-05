@@ -3,9 +3,10 @@ package fbintegration
 import (
 	"encoding/json"
 	"fmt"
-	facebookLib "github.com/huandu/facebook"
 	"reflect"
 	"strconv"
+
+	facebookLib "github.com/huandu/facebook"
 )
 
 type (
@@ -41,10 +42,12 @@ func NewDemographicSplitFromResult(results *facebookLib.Result, total float64) D
 	return demographicSplit
 }
 
+// Push comment pending
 func (as *DemographicSplit) Push(demographicSplitItem DemographicSplitItem) {
 	as.Data = append(as.Data, demographicSplitItem)
 }
 
+// MarshalJSON comment pending
 func (as DemographicSplit) MarshalJSON() ([]byte, error) {
 	demographicSplit := map[string]map[string]float64{}
 
