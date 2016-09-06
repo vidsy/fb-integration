@@ -13,11 +13,11 @@ import (
 type (
 	// Post comment pending
 	Post struct {
-		Name     string       `facebook:"message" json:"name"`
+		Name     string       `facebook:"message"   json:"name"`
 		ID       string       `facebook:"id"        json:"post_id"`
 		AdID     string       `json:"ad_id"`
 		AdsetID  string       `json:"adset_id"`
-		ObjectID string       `facebook:"object_id" json:"object_id"`
+		ObjectID string       `json:"object_id"`
 		Results  *PostResults `json:"-"`
 		Data     *PostData    `json:"data,omitempty"`
 	}
@@ -43,7 +43,7 @@ func (p Post) GenerateInsightParams() BatchParams {
 
 // GenerateParams comment pending
 func (p *Post) GenerateParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"))
+	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "message"))
 }
 
 // GeneratePostCreatedTimestampParams comment pending
@@ -145,7 +145,10 @@ func (p *Post) ParseResults() {
 		p.Data.VideoViewsPaid = videoViewsPaid["value"].(float64)
 	}
 
-	p.Data.UniqueViewers = p.getInsightsValue("post_video_views_unique")["value"].(float64)
+	videoViewsUnique := p.getInsightsValue("post_video_views_unique")
+	if videoViewsUnique != nil {
+		p.Data.UniqueViewers = videoViewsUnique["value"].(float64)
+	}
 
 	if p.Data.UniqueViewers > 0 && p.Data.PeopleReached > 0 {
 		p.Data.ViewRate = (p.Data.UniqueViewers / p.Data.PeopleReached) * 100
@@ -161,9 +164,13 @@ func (p *Post) ParseResults() {
 		p.Data.ViewsToNinetyFivePercentCompletePaid = viewsToNinetyFivePercentCompletePaid["value"].(float64)
 	}
 
-	p.Data.ViewsToNinetyFivePercentComplete = p.Data.ViewsToNinetyFivePercentCompletePaid + p.Data.ViewsToNinetyFivePercentCompleteOrganic
+	if p.Data.ViewsToNinetyFivePercentCompletePaid > 0 && p.Data.ViewsToNinetyFivePercentCompleteOrganic > 0 {
+		p.Data.ViewsToNinetyFivePercentComplete = p.Data.ViewsToNinetyFivePercentCompletePaid + p.Data.ViewsToNinetyFivePercentCompleteOrganic
+	}
 
-	p.Data.PercentViewsCompleted = (p.Data.ViewsToNinetyFivePercentComplete / p.Data.VideoViews) * 100
+	if p.Data.ViewsToNinetyFivePercentComplete > 0 && p.Data.VideoViews > 0 {
+		p.Data.PercentViewsCompleted = (p.Data.ViewsToNinetyFivePercentComplete / p.Data.VideoViews) * 100
+	}
 
 	averageDurationWatched := p.getInsightsValue("post_video_avg_time_watched")
 	if averageDurationWatched != nil {
@@ -282,9 +289,14 @@ func (p Post) getAdInsightsValue(key string) interface{} {
 
 func (p Post) getActionTypeTotal(actionType string) float64 {
 	postStories := p.getInsightsValue("post_stories_by_action_type")
+	if postStories["value"] == nil {
+		return 0
+	}
+
 	reflectedMap := reflect.ValueOf(postStories["value"])
 	valuesMap := reflectedMap.Interface().(map[string]interface{})
 	value := valuesMap[actionType]
+
 	if value != nil {
 		return valuesMap[actionType].(float64)
 	}

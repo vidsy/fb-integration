@@ -2,6 +2,7 @@ package fbintegration
 
 import (
 	"fmt"
+	"math"
 )
 
 type (
@@ -44,9 +45,14 @@ func (ba *BrandAds) Add(ad Ad) {
 func (ba *BrandAds) GenerateSlices(size int) []AdBatch {
 	var adBatch []AdBatch
 
-	batchAmount := len(ba.Ads) / size
+	batchAmount := int(math.Ceil(float64(len(ba.Ads)) / float64(size)))
+
 	startIndex := 0
 	endIndex := size
+
+	if len(ba.Ads) < size {
+		endIndex = len(ba.Ads)
+	}
 
 	for i := 0; i < batchAmount; i++ {
 		batch := AdBatch{ba.Ads[startIndex:endIndex]}
