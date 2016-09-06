@@ -50,15 +50,12 @@ func (ba *BrandAds) GenerateSlices(size int) []AdBatch {
 	startIndex := 0
 	endIndex := size
 
-	for i := 0; i < batchAmount; i++ {
-		var ads []Ad
-		if batchAmount == 1 {
-			ads = ba.Ads
-		} else {
-			ads = ba.Ads[startIndex:endIndex]
-		}
+	if len(ba.Ads) < size {
+		endIndex = len(ba.Ads)
+	}
 
-		batch := AdBatch{ads}
+	for i := 0; i < batchAmount; i++ {
+		batch := AdBatch{ba.Ads[startIndex:endIndex]}
 		adBatch = append(adBatch, batch)
 
 		startIndex += size
