@@ -28,7 +28,7 @@ func NewAd(result *facebookLib.Result) Ad {
 	ad := Ad{
 		id,
 		adsetID,
-		&Creative{creativeID, "", ""},
+		&Creative{ID: creativeID},
 		&Post{},
 	}
 
