@@ -60,6 +60,10 @@ func (ba *BrandAds) GenerateSlices(size int) []AdBatch {
 
 		startIndex += size
 		endIndex += size
+
+		if endIndex > len(ba.Ads) {
+			endIndex = len(ba.Ads)
+		}
 	}
 
 	return adBatch

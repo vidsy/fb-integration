@@ -45,6 +45,10 @@ func (a *APIResponse) Data(paginate bool) ([]facebookLib.Result, error) {
 	var results []facebookLib.Result
 	results = append(results, *a.Result)
 
+	if err := results[0].Err(); err != nil {
+		return []facebookLib.Result{}, err
+	}
+
 	return results, nil
 }
 
