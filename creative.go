@@ -46,3 +46,20 @@ func (c *Creative) IsVideo() bool {
 	}
 	return false
 }
+
+// HasObjectID comment pending
+func (c Creative) HasObjectID() bool {
+	if c.ObjectStorySpec.VideoData.VideoID != "" {
+		return true
+	}
+	return false
+}
+
+// ObjectID comment pending
+func (c Creative) ObjectID() string {
+	if c.HasObjectID() {
+		return c.ObjectStorySpec.VideoData.VideoID
+	}
+
+	return ""
+}

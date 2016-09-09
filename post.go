@@ -43,7 +43,7 @@ func (p Post) GenerateInsightParams() BatchParams {
 
 // GenerateParams comment pending
 func (p *Post) GenerateParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "message"))
+	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"))
 }
 
 // GeneratePostCreatedTimestampParams comment pending
