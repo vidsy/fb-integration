@@ -67,12 +67,20 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 
 // calculateViewRate comment pending
 func calculateViewRate(totalUniqueVideoViews float64, totalPeopleReached float64) float64 {
-	return (totalUniqueVideoViews / totalPeopleReached) * 100
+	if totalUniqueVideoViews > 0 && totalPeopleReached > 0 {
+		return (totalUniqueVideoViews / totalPeopleReached) * 100
+	} else {
+		return 0
+	}
 }
 
 // calculateEngagementRate comment pending
 func calculateEngagementRate(totalPostConsumptions float64, totalPostEngagements float64, totalPeopleReached float64) float64 {
-	return ((totalPostConsumptions + totalPostEngagements) / totalPeopleReached) * 100
+	if totalPostConsumptions > 0 && totalPostEngagements > 0 && totalPeopleReached > 0 {
+		return ((totalPostConsumptions + totalPostEngagements) / totalPeopleReached) * 100
+	} else {
+		return 0
+	}
 }
 
 // ToJSON comment pending
