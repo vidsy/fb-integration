@@ -34,7 +34,7 @@ type (
 			Interests []struct {
 				Name string `facebook:"name"`
 			} `facebook:"interests"`
-			FlexibleSpecs []struct {
+			FlexibleSpec []struct {
 				Interests []struct {
 					Name string `facebook:"name"`
 				} `facebook:"interests"`
@@ -50,8 +50,8 @@ func (atp AdTargetingPayload) HasInterests() bool {
 
 // HasFlexibleInterests comment pending
 func (atp AdTargetingPayload) HasFlexibleInterests() bool {
-	if len(atp.Targeting.FlexibleSpecs) > 0 {
-		for _, flexibleSpec := range atp.Targeting.FlexibleSpecs {
+	if len(atp.Targeting.FlexibleSpec) > 0 {
+		for _, flexibleSpec := range atp.Targeting.FlexibleSpec {
 			if len(flexibleSpec.Interests) > 0 {
 				return true
 			}
@@ -63,9 +63,9 @@ func (atp AdTargetingPayload) HasFlexibleInterests() bool {
 // FlexibleInterests comment pending
 func (atp AdTargetingPayload) FlexibleInterests() []string {
 	var interests []string
-	for index, flexibleSpec := range atp.Targeting.FlexibleSpecs {
+	for index, flexibleSpec := range atp.Targeting.FlexibleSpec {
 		if len(flexibleSpec.Interests) > 0 {
-			for _, interest := range atp.Targeting.FlexibleSpecs[index].Interests {
+			for _, interest := range atp.Targeting.FlexibleSpec[index].Interests {
 				interests = append(interests, interest.Name)
 			}
 		}
