@@ -1,32 +1,100 @@
 package fbintegration
 
 import (
-	"fmt"
 	facebookLib "github.com/huandu/facebook"
 	"github.com/pariz/gountries"
-	"reflect"
 )
 
 type (
 	// AdTargeting comment pending
 	AdTargeting struct {
 		Locations []string `json:"locations"`
-		AgeMin    float64  `json:"age_min"`
-		AgeMax    float64  `json:"age_max"`
+		AgeMin    int      `json:"age_min"`
+		AgeMax    int      `json:"age_max"`
 		Interests []string `json:"interests"`
+		Genders   struct {
+			Male   bool `json:"male"`
+			Female bool `json:"female"`
+		} `json:"genders"`
+	}
+
+	// AdTargetingPayload comment pending
+	AdTargetingPayload struct {
+		Targeting struct {
+			GeoLocations struct {
+				Countries     []string `facebook:"countries"`
+				CountryGroups []string `facebook"country_groups"`
+				Cities        []struct {
+					Name string `facebook:"name"`
+				} `facebook:"cities"`
+			} `facebook:"geo_locations"`
+			AgeMin    int   `facebook:"age_min"`
+			AgeMax    int   `facebook:"age_max"`
+			Genders   []int `facebook:"genders"`
+			Interests []struct {
+				Name string `facebook:"name"`
+			} `facebook:"interests"`
+			FlexibleSpec []struct {
+				Interests []struct {
+					Name string `facebook:"name"`
+				} `facebook:"interests"`
+			} `facebook:"flexible_spec"`
+		} `facebook:"targeting"`
 	}
 )
+
+// HasInterests comment pending
+func (atp AdTargetingPayload) HasInterests() bool {
+	return len(atp.Targeting.Interests) > 0
+}
+
+// HasFlexibleInterests comment pending
+func (atp AdTargetingPayload) HasFlexibleInterests() bool {
+	if len(atp.Targeting.FlexibleSpec) > 0 {
+		for _, flexibleSpec := range atp.Targeting.FlexibleSpec {
+			if len(flexibleSpec.Interests) > 0 {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// FlexibleInterests comment pending
+func (atp AdTargetingPayload) FlexibleInterests() []string {
+	var interests []string
+	for index, flexibleSpec := range atp.Targeting.FlexibleSpec {
+		if len(flexibleSpec.Interests) > 0 {
+			for _, interest := range atp.Targeting.FlexibleSpec[index].Interests {
+				interests = append(interests, interest.Name)
+			}
+		}
+	}
+
+	return interests
+}
 
 // NewAdTargetingFromResult comment pending
 func NewAdTargetingFromResult(results *facebookLib.Result) AdTargeting {
 	query := gountries.New()
 	adTargeting := AdTargeting{}
 
-	countries := results.Get("targeting.geo_locations.countries")
-	if countries != nil {
-		countryList := reflect.ValueOf(countries)
-		for i := 0; i < countryList.Len(); i++ {
-			country := results.Get(fmt.Sprintf("targeting.geo_locations.countries.%d", i)).(string)
+	var adTargetingPayload AdTargetingPayload
+	results.DecodeField("", &adTargetingPayload)
+	targeting := adTargetingPayload.Targeting
+
+	if adTargetingPayload.HasInterests() {
+		for _, interest := range targeting.Interests {
+			adTargeting.Interests = append(adTargeting.Interests, interest.Name)
+		}
+	}
+
+	if adTargetingPayload.HasFlexibleInterests() {
+		adTargeting.Interests = append(adTargeting.Interests, adTargetingPayload.FlexibleInterests()...)
+	}
+
+	if len(targeting.GeoLocations.Countries) > 0 {
+		for _, country := range targeting.GeoLocations.Countries {
 			countryName, err := query.FindCountryByAlpha(country)
 			if err != nil {
 				adTargeting.Locations = append(adTargeting.Locations, country)
@@ -36,36 +104,28 @@ func NewAdTargetingFromResult(results *facebookLib.Result) AdTargeting {
 		}
 	}
 
-	ageMin := results.Get("targeting.age_min")
-	if ageMin != nil {
-		adTargeting.AgeMin = ageMin.(float64)
+	if len(targeting.GeoLocations.Cities) > 0 {
+		for _, city := range targeting.GeoLocations.Cities {
+			adTargeting.Locations = append(adTargeting.Locations, city.Name)
+		}
 	}
 
-	ageMax := results.Get("targeting.age_max")
-	if ageMax != nil {
-		adTargeting.AgeMax = ageMax.(float64)
-	}
+	adTargeting.AgeMin = targeting.AgeMin
+	adTargeting.AgeMax = targeting.AgeMax
 
-	interests := results.Get("targeting.interests")
-	if interests != nil {
-		adTargeting.Interests = addInterests(interests, results)
-	}
-
-	flexibleInterests := results.Get("targeting.flexible_spec.interests")
-	if flexibleInterests != nil {
-		adTargeting.Interests = addInterests(flexibleInterests, results)
+	if len(targeting.Genders) > 0 {
+		for _, gender := range targeting.Genders {
+			switch gender {
+			case 1:
+				adTargeting.Genders.Male = true
+			case 2:
+				adTargeting.Genders.Female = true
+			}
+		}
+	} else {
+		adTargeting.Genders.Male = true
+		adTargeting.Genders.Female = true
 	}
 
 	return adTargeting
-}
-
-func addInterests(interests interface{}, results *facebookLib.Result) []string {
-	var filteredInterests []string
-	interestsList := reflect.ValueOf(interests)
-	for i := 0; i < interestsList.Len(); i++ {
-		interest := results.Get(fmt.Sprintf("targeting.interests.%d.name", i)).(string)
-		filteredInterests = append(filteredInterests, interest)
-	}
-
-	return filteredInterests
 }
