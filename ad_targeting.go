@@ -43,10 +43,12 @@ type (
 	}
 )
 
+// HasInterests comment pending
 func (atp AdTargetingPayload) HasInterests() bool {
 	return len(atp.Targeting.Interests) > 0
 }
 
+// HasFlexibleInterests comment pending
 func (atp AdTargetingPayload) HasFlexibleInterests() bool {
 	if len(atp.Targeting.FlexibleSpecs) > 0 {
 		for _, flexibleSpec := range atp.Targeting.FlexibleSpecs {
@@ -58,6 +60,7 @@ func (atp AdTargetingPayload) HasFlexibleInterests() bool {
 	return false
 }
 
+// FlexibleInterests comment pending
 func (atp AdTargetingPayload) FlexibleInterests() []string {
 	var interests []string
 	for index, flexibleSpec := range atp.Targeting.FlexibleSpecs {
