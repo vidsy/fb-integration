@@ -91,11 +91,13 @@ func (ba *BrandAds) FindByPostID(postID string) *Ad {
 }
 
 // FindByObjectID comment pending
-func (ba *BrandAds) FindByObjectID(objectID string) *Ad {
+func (ba *BrandAds) FindByObjectID(objectID string) []*Ad {
+	var ads []*Ad
+
 	for i, ad := range ba.Ads {
 		if ad.Post.ObjectID == objectID {
-			return &ba.Ads[i]
+			ads = append(ads, &ba.Ads[i])
 		}
 	}
-	return nil
+	return ads
 }
