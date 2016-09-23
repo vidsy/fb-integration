@@ -118,7 +118,7 @@ func (p *Post) ParseResults() {
 		p.Data.EngagedUsers = engagedUsers["value"].(float64)
 	}
 
-	if p.Data.PostEngagements > 0 && p.Data.PostConsumptions > 0 && p.Data.PeopleReached > 0 {
+	if p.Data.PeopleReached > 0 {
 		p.Data.EngagementRate = (((p.Data.PostConsumptions + p.Data.PostEngagements) / p.Data.PeopleReached) * 100)
 	}
 
@@ -150,7 +150,7 @@ func (p *Post) ParseResults() {
 		p.Data.UniqueViewers = videoViewsUnique["value"].(float64)
 	}
 
-	if p.Data.UniqueViewers > 0 && p.Data.PeopleReached > 0 {
+	if p.Data.PeopleReached > 0 {
 		p.Data.ViewRate = (p.Data.UniqueViewers / p.Data.PeopleReached) * 100
 	}
 
@@ -164,11 +164,9 @@ func (p *Post) ParseResults() {
 		p.Data.ViewsToNinetyFivePercentCompletePaid = viewsToNinetyFivePercentCompletePaid["value"].(float64)
 	}
 
-	if p.Data.ViewsToNinetyFivePercentCompletePaid > 0 && p.Data.ViewsToNinetyFivePercentCompleteOrganic > 0 {
-		p.Data.ViewsToNinetyFivePercentComplete = p.Data.ViewsToNinetyFivePercentCompletePaid + p.Data.ViewsToNinetyFivePercentCompleteOrganic
-	}
+	p.Data.ViewsToNinetyFivePercentComplete = p.Data.ViewsToNinetyFivePercentCompletePaid + p.Data.ViewsToNinetyFivePercentCompleteOrganic
 
-	if p.Data.ViewsToNinetyFivePercentComplete > 0 && p.Data.VideoViews > 0 {
+	if p.Data.VideoViews > 0 {
 		p.Data.PercentViewsCompleted = (p.Data.ViewsToNinetyFivePercentComplete / p.Data.VideoViews) * 100
 	}
 
