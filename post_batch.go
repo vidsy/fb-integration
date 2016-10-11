@@ -70,16 +70,14 @@ func (p PostBatch) InsightParams() []BatchParams {
 }
 
 // ReactionBreakdownParams comment pending
-func (p PostBatch) ReactionBreakdownParams() []BatchParams {
-	var params []BatchParams
+func (p PostBatch) ReactionBreakdownParams() map[string][]BatchParams {
+	postParams := make(map[string][]BatchParams, len(p.Posts))
 
 	for i := 0; i < len(p.Posts); i++ {
-		for _, p := range p.Posts[i].GenerateReactionBreakdownParams() {
-			params = append(params, p)
-		}
+		postParams[p.Posts[i].ID] = p.Posts[i].GenerateReactionBreakdownParams()
 	}
 
-	return params
+	return postParams
 }
 
 // TotalReactionsParams comment pending
