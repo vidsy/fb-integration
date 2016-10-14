@@ -96,7 +96,7 @@ func (p *Post) ParseResults() {
 
 	p.Data.PeopleReachedOrganic = (p.Data.PeopleReached - p.Data.PeopleReachedPaid)
 
-	p.Data.Reactions = p.getActionTypeTotal("like")
+	p.Data.Reactions = p.getReactionsTotal(p.Results.TotalReactions)
 
 	p.Data.ReactionsBreakdown = make(map[string]float64)
 	for i, reactionType := range p.ReactionTypes() {
