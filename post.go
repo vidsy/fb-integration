@@ -235,7 +235,12 @@ func (p Post) getCreatedTimestamp() (time.Time, error) {
 }
 
 func (p Post) getShares() float64 {
-	return p.Results.PostData.Get("shares.count").(float64)
+	shares := p.Results.PostData.Get("shares.count")
+	if shares == nil {
+		return 0
+	}
+
+	return shares.(float64)
 }
 
 func (p Post) getInsightsValue(key string) map[string]interface{} {
