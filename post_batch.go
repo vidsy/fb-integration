@@ -115,7 +115,8 @@ func (p PostBatch) TotalAdInsightsBreakDownParams() []BatchParams {
 	return params
 }
 
-// PostDataParams comment pending
+// PostDataParams return a slice of BatchParams for post realted
+// fields.
 func (p PostBatch) PostDataParams() []BatchParams {
 	var params []BatchParams
 
