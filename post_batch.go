@@ -34,13 +34,13 @@ func GeneratePostBatchSlices(posts []*Post, size int) []PostBatch {
 	return postBatches
 }
 
-// EngagementParams comment pending
-func (p PostBatch) EngagementParams() []BatchParams {
+// CommentParams returns a slice of BatchParams of comment requests
+// for each post.
+func (p PostBatch) CommentParams() []BatchParams {
 	var params []BatchParams
 
 	for i := 0; i < len(p.Posts); i++ {
 		params = append(params, p.Posts[i].GenerateCommentsParams())
-		params = append(params, p.Posts[i].GenerateSharesParams())
 	}
 
 	return params
@@ -115,12 +115,13 @@ func (p PostBatch) TotalAdInsightsBreakDownParams() []BatchParams {
 	return params
 }
 
-// PostCreatedTimestampParams comment pending
-func (p PostBatch) PostCreatedTimestampParams() []BatchParams {
+// PostDataParams return a slice of BatchParams for post realted
+// fields.
+func (p PostBatch) PostDataParams() []BatchParams {
 	var params []BatchParams
 
 	for i := 0; i < len(p.Posts); i++ {
-		params = append(params, p.Posts[i].GeneratePostCreatedTimestampParams())
+		params = append(params, p.Posts[i].GeneratePostParams())
 	}
 
 	return params

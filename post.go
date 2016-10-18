@@ -33,7 +33,7 @@ func NewPostFromResult(result facebookLib.Result) Post {
 
 // GenerateCommentsParams comment pending
 func (p Post) GenerateCommentsParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s/comments?summary=true&filter=stream", p.ID))
+	return NewBatchParams(fmt.Sprintf("%s/comments?summary=true&limit=0&period=lifetime", p.ID))
 }
 
 // GenerateInsightParams comment pending
@@ -46,9 +46,10 @@ func (p *Post) GenerateParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"))
 }
 
-// GeneratePostCreatedTimestampParams comment pending
-func (p *Post) GeneratePostCreatedTimestampParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "created_time"))
+// GeneratePostParams creates params for getting back data on a
+// particular post.
+func (p *Post) GeneratePostParams() BatchParams {
+	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "created_time,shares"))
 }
 
 // GenerateReactionBreakdownParams comment pending
@@ -103,8 +104,8 @@ func (p *Post) ParseResults() {
 		p.Data.ReactionsBreakdown[reactionType] = p.getReactionsTotal(p.Results.ReactionBreakdown[i])
 	}
 
-	p.Data.Comments = p.getActionTypeTotal("comment")
-	p.Data.Shares = p.getActionTypeTotal("share")
+	p.Data.Comments = p.getComments()
+	p.Data.Shares = p.getShares()
 
 	postConsumptions := p.getInsightsValue("post_consumptions")
 	if postConsumptions != nil {
@@ -223,14 +224,18 @@ func (p Post) generateTargeting() AdTargeting {
 }
 
 func (p Post) getComments() float64 {
-	return p.Results.Engagement[0].Get("summary.total_count").(float64)
+	return p.Results.Comments.Get("summary.total_count").(float64)
 }
 
 func (p Post) getCreatedTimestamp() (time.Time, error) {
 	layout := "2006-01-02T15:04:05-0700"
-	t := p.Results.CreatedTimestamp.Get("created_time")
+	t := p.Results.PostData.Get("created_time")
 
 	return time.Parse(layout, t.(string))
+}
+
+func (p Post) getShares() float64 {
+	return p.Results.PostData.Get("shares.count").(float64)
 }
 
 func (p Post) getInsightsValue(key string) map[string]interface{} {
@@ -255,23 +260,6 @@ func (p Post) getInsightsValue(key string) map[string]interface{} {
 	}
 
 	return nil
-}
-
-func (p Post) getShares() float64 {
-	queryBase := "data.0.unique_actions"
-	data := p.Results.AdInsights.Get(queryBase)
-	slice := reflect.ValueOf(data)
-
-	for i := 0; i < slice.Len(); i++ {
-		query := fmt.Sprintf("%s.%d.action_type", queryBase, i)
-		actionType := p.Results.AdInsights.Get(query)
-
-		if actionType == "post" {
-			query := fmt.Sprintf("%s.%d.value", queryBase, i)
-			return p.Results.AdInsights.Get(query).(float64)
-		}
-	}
-	return 0
 }
 
 func (p Post) getAdInsightsValue(key string) interface{} {

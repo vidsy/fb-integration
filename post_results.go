@@ -8,12 +8,12 @@ type (
 	// PostResults comment pending
 	PostResults struct {
 		Targeting           *facebookLib.Result
-		Engagement          []*facebookLib.Result
+		Comments            *facebookLib.Result
 		Insights            *facebookLib.Result
 		AdInsights          *facebookLib.Result
 		AdBreakdownInsights *facebookLib.Result
 		ReactionBreakdown   []*facebookLib.Result
 		TotalReactions      *facebookLib.Result
-		CreatedTimestamp    *facebookLib.Result
+		PostData            *facebookLib.Result
 	}
 )
