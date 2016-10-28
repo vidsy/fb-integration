@@ -28,7 +28,11 @@ func GeneratePostBatchSlices(posts []*Post, size int) []PostBatch {
 
 		postBatches = append(postBatches, batch)
 		start += size
-		end += size
+		if (end + size) > len(posts) {
+			end += len(posts) - end
+		} else {
+			end += size
+		}
 	}
 
 	return postBatches
