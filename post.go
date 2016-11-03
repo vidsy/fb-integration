@@ -253,20 +253,22 @@ func (p Post) getInsightsValue(key string) map[string]interface{} {
 	data := p.Results.Insights.Get("data")
 	slice := reflect.ValueOf(data)
 
-	for i := 0; i < slice.Len(); i++ {
-		query := fmt.Sprintf("data.%d.name", i)
-		name := p.Results.Insights.Get(query)
+	if slice.Valid() {
+		for i := 0; i < slice.Len(); i++ {
+			query := fmt.Sprintf("data.%d.name", i)
+			name := p.Results.Insights.Get(query)
 
-		if name == key {
-			query = fmt.Sprintf("data.%d.values", i)
-			values := p.Results.Insights.Get(query).([]interface{})
+			if name == key {
+				query = fmt.Sprintf("data.%d.values", i)
+				values := p.Results.Insights.Get(query).([]interface{})
 
-			if len(values) > 0 {
-				query = fmt.Sprintf("data.%d.values.0", i)
-				return p.Results.Insights.Get(query).(map[string]interface{})
+				if len(values) > 0 {
+					query = fmt.Sprintf("data.%d.values.0", i)
+					return p.Results.Insights.Get(query).(map[string]interface{})
+				}
+
+				return nil
 			}
-
-			return nil
 		}
 	}
 
