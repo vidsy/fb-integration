@@ -253,7 +253,7 @@ func (p Post) getInsightsValue(key string) map[string]interface{} {
 	data := p.Results.Insights.Get("data")
 	slice := reflect.ValueOf(data)
 
-	if slice.Valid() {
+	if slice.IsValid() {
 		for i := 0; i < slice.Len(); i++ {
 			query := fmt.Sprintf("data.%d.name", i)
 			name := p.Results.Insights.Get(query)
