@@ -1,8 +1,10 @@
-hash: 25ac1c163d1d153f8996f02477ecbd947ce50ddaa6e14be199ed7aefc9cc0646
-updated: 2016-08-25T11:17:44.82063421+01:00
+hash: 24fd018773174f4f508095d88fd1107ab570905cd52b0bdd3729923c715acea6
+updated: 2016-12-01T12:18:49.875951998Z
 imports:
 - name: github.com/huandu/facebook
-  version: e7512237e5dc620be55f6bd9ab2d75e7ebbb914c
+  version: 24ce8d1913aaad265ff4cb4af6a1d1b1801d3021
 - name: github.com/pariz/gountries
-  version: 9f809e356e5cc61e570a77e6b7fe5f5eafab3576
-devImports: []
+  version: 01a8f4c7c6e404b6529ada4b5e25f00672670f6d
+- name: gopkg.in/yaml.v2
+  version: a5b47d31c556af34a302ce5d659e6fea44d90de0
+testImports: []

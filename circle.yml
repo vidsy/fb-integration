@@ -1,11 +1,20 @@
+general:
+  branches:
+    ignore:
+      - master
+
 machine:
   services:
     - docker
+  environment:
+    PATH_BASE: "/go/src/github.com/vidsy"
+    GO_BUILDER_IMAGE: "vidsyhq/go-builder"
 
 dependencies:
   override:
-    - echo "No dependencies."
+    - make install
 
 test:
   override:
-    - echo "No tests."
+    - make test_ci
+    - make check-version
