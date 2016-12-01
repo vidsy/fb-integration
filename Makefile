@@ -7,7 +7,7 @@ VERSION = $(shell cat ./VERSION)
 
 DEFAULT: test
 
-install:
+install-dependencies:
 	@docker run \
 	-v /home/ubuntu/.ssh/${SSH_KEY_NAME}:/root/.ssh/${SSH_KEY_NAME} \
 	-v "${CURDIR}":${PATH_BASE}/${REPONAME} \
@@ -28,7 +28,7 @@ push-tag:
 test:
 	@echo "No tests yet :("
 
-test_ci: test
+test-ci: test
 
-test_coverage:
+test-coverage:
 	@echo "No tests yet :("

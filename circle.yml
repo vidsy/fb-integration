@@ -12,7 +12,7 @@ machine:
 
 dependencies:
   override:
-    - make install
+    - make install-dependencies
 
 test:
   override:
