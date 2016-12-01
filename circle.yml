@@ -16,5 +16,5 @@ dependencies:
 
 test:
   override:
-    - make test_ci
+    - make test-ci
     - make check-version
