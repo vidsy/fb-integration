@@ -4,6 +4,7 @@ REPONAME ?= "fbintegration"
 SSH_KEY_NAME ?= "id_circleci_github"
 BRANCH = "master"
 VERSION = $(shell cat ./VERSION)
+TEST_PACKAGES = "."
 
 DEFAULT: test
 
@@ -26,9 +27,21 @@ push-tag:
 	git push origin ${BRANCH} --tags
 
 test:
-	@echo "No tests yet :("
+	@docker run \
+	-it \
+	--rm \
+	-v "${CURDIR}/..":${PATH_BASE} \
+	-w ${PATH_BASE}/${REPONAME} \
+	--entrypoint=go \
+	${GO_BUILDER_IMAGE} test "${TEST_PACKAGES}"
 
-test-ci: test
+test-ci:
+	@docker run \
+	-v "${CURDIR}/..":${PATH_BASE} \
+	-w ${PATH_BASE}/${REPONAME} \
+	--entrypoint=go \
+	${GO_BUILDER_IMAGE} test "${TEST_PACKAGES}" -cover
+
 
 test-coverage:
 	@echo "No tests yet :("

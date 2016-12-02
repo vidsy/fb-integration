@@ -1,20 +1,25 @@
 package fbintegration
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type (
 	// PostsSummary comment pending
 	PostsSummary struct {
-		VideosPosted      int     `json:"videos_posted"`
-		CampaignReach     float64 `json:"campaign_reach"`
-		CampaignViews     float64 `json:"campaign_views"`
-		MinutesViewed     float64 `json:"minutes_viewed"`
-		UnqiueViewers     float64 `json:"unqiue_viewers"`
-		OverallViewRate   float64 `json:"overall_view_rate"`
-		TotalEngagement   float64 `json:"total_engagement"`
-		EngagementRate    float64 `json:"engagement_rate"`
-		TopViewedVideoID  string  `json:"top_viewed_video_id"`
-		TopEngagedVideoID string  `json:"top_engaged_video_id"`
+		VideosPosted             int     `json:"videos_posted"`
+		CampaignReach            float64 `json:"campaign_reach"`
+		CampaignViews            float64 `json:"campaign_views"`
+		MinutesViewed            float64 `json:"minutes_viewed"`
+		UnqiueViewers            float64 `json:"unqiue_viewers"`
+		OverallViewRate          float64 `json:"overall_view_rate"`
+		TotalEngagement          float64 `json:"total_engagement"`
+		EngagementRate           float64 `json:"engagement_rate"`
+		TopReaction              string  `json:"top_reaction"`
+		TopEngagementRatePercent float64 `json:"top_engagement_rate_percent"`
+		TopEngagementRateVideoID float64 `json:"top_engagement_rate_video_id"`
+		TopViewRatePercent       float64 `json:"top_view_rate_percent"`
+		TopViewRateVideoID       float64 `json:"top_view_rate_video_id"`
 	}
 )
 
@@ -25,9 +30,10 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 	var totalPeopleReached float64
 	var totalPostConsumptions float64
 	var totalPostEngagements float64
+	var totalReactionsBreakdown TotalReactionsBreakdown
 
-	topViewedVideoPost := posts[0]
-	topEngagedVideoPost := posts[0]
+	topVieweRateVideoPost := posts[0]
+	topEngagementRateVideoPost := posts[0]
 
 	videosUsed := make(map[string]*interface{})
 
@@ -43,26 +49,40 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 		totalPostConsumptions += post.Data.PostConsumptions
 		totalPostEngagements += post.Data.PostEngagements
 
-		if post.Data.VideoViews > topViewedVideoPost.Data.VideoViews {
-			topViewedVideoPost = post
+		if post.Data.ViewRate > topVieweRateVideoPost.Data.ViewRate {
+			topVieweRateVideoPost = post
 		}
 
-		if post.Data.EngagementRate > topEngagedVideoPost.Data.EngagementRate {
-			topEngagedVideoPost = post
+		if post.Data.EngagementRate > topEngagementRateVideoPost.Data.EngagementRate {
+			topEngagementRateVideoPost = post
 		}
 
 		if _, exists := videosUsed[post.ObjectID]; !exists {
 			videosUsed[post.ObjectID] = nil
 		}
+
+		totalReactionsBreakdown = processTotalReactionBreakdown(totalReactionsBreakdown, post.Data.ReactionsBreakdown)
 	}
 
 	ps.OverallViewRate = calculateViewRate(totalUniqueViewers, totalPeopleReached)
 	ps.EngagementRate = calculateEngagementRate(totalPostConsumptions, totalPostEngagements, totalPeopleReached)
-	ps.TopEngagedVideoID = topEngagedVideoPost.ObjectID
-	ps.TopViewedVideoID = topViewedVideoPost.ObjectID
+	//ps.TopEngagedVideoID = topEngagedVideoPost.ObjectID
+	//ps.TopViewedVideoID = topViewedVideoPost.ObjectID
 	ps.VideosPosted = len(videosUsed)
 
 	return ps
+}
+
+func processTotalReactionBreakdown(totalReactionBreakdown TotalReactionsBreakdown, postReactionBreakdowns map[string]float64) TotalReactionsBreakdown {
+	for reactionType, amount := range postReactionBreakdowns {
+		if totalReactionBreakdown.HasType(reactionType) {
+			totalReactionBreakdown.IncrementValueForType(reactionType, amount)
+		} else {
+			totalReactionBreakdown = append(totalReactionBreakdown, ReactionsBreakdown{reactionType, amount})
+		}
+	}
+
+	return totalReactionBreakdown
 }
 
 // calculateViewRate comment pending
