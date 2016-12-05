@@ -17,9 +17,9 @@ type (
 		EngagementRate           float64 `json:"engagement_rate"`
 		TopReaction              string  `json:"top_reaction"`
 		TopEngagementRatePercent float64 `json:"top_engagement_rate_percent"`
-		TopEngagementRateVideoID float64 `json:"top_engagement_rate_video_id"`
+		TopEngagementRateVideoID string  `json:"top_engagement_rate_video_id"`
 		TopViewRatePercent       float64 `json:"top_view_rate_percent"`
-		TopViewRateVideoID       float64 `json:"top_view_rate_video_id"`
+		TopViewRateVideoID       string  `json:"top_view_rate_video_id"`
 	}
 )
 
@@ -32,7 +32,7 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 	var totalPostEngagements float64
 	var totalReactionsBreakdown TotalReactionsBreakdown
 
-	topVieweRateVideoPost := posts[0]
+	topViewRateVideoPost := posts[0]
 	topEngagementRateVideoPost := posts[0]
 
 	videosUsed := make(map[string]*interface{})
@@ -49,12 +49,17 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 		totalPostConsumptions += post.Data.PostConsumptions
 		totalPostEngagements += post.Data.PostEngagements
 
-		if post.Data.ViewRate > topVieweRateVideoPost.Data.ViewRate {
-			topVieweRateVideoPost = post
+		if post.Data.ViewRate > topViewRateVideoPost.Data.ViewRate {
+			topViewRateVideoPost = post
+			ps.TopViewRateVideoID = topViewRateVideoPost.ObjectID
+			ps.TopViewRatePercent = topViewRateVideoPost.Data.ViewRate
+
 		}
 
 		if post.Data.EngagementRate > topEngagementRateVideoPost.Data.EngagementRate {
 			topEngagementRateVideoPost = post
+			ps.TopEngagementRateVideoID = topEngagementRateVideoPost.ObjectID
+			ps.TopEngagementRatePercent = topEngagementRateVideoPost.Data.EngagementRate
 		}
 
 		if _, exists := videosUsed[post.ObjectID]; !exists {
@@ -66,8 +71,8 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 
 	ps.OverallViewRate = calculateViewRate(totalUniqueViewers, totalPeopleReached)
 	ps.EngagementRate = calculateEngagementRate(totalPostConsumptions, totalPostEngagements, totalPeopleReached)
-	//ps.TopEngagedVideoID = topEngagedVideoPost.ObjectID
-	//ps.TopViewedVideoID = topViewedVideoPost.ObjectID
+	ps.TopEngagementRateVideoID = topEngagementRateVideoPost.ObjectID
+	ps.TopViewRateVideoID = topViewRateVideoPost.ObjectID
 	ps.VideosPosted = len(videosUsed)
 
 	return ps
