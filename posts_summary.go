@@ -91,8 +91,6 @@ func processTotalReactionBreakdown(totalReactionBreakdown TotalReactionsBreakdow
 		}
 	}
 
-	sort.Sort(totalReactionBreakdown)
-
 	return totalReactionBreakdown
 }
 
