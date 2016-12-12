@@ -16,7 +16,7 @@ func TestTotalReactionsBreakdown(t *testing.T) {
 
 			sort.Sort(&totalReactionsBreakdown)
 
-			if totalReactionsBreakdown[1].Value != 5.00 {
+			if totalReactionsBreakdown[0].Value != 5.00 {
 				t.Fatalf("Expected .Value to be 5, got: %.2f", totalReactionsBreakdown[1].Value)
 			}
 		})
