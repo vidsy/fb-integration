@@ -49,14 +49,14 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 		totalPostConsumptions += post.Data.PostConsumptions
 		totalPostEngagements += post.Data.PostEngagements
 
-		if post.Data.ViewRate > topViewRateVideoPost.Data.ViewRate {
+		if post.Data.ViewRate >= topViewRateVideoPost.Data.ViewRate {
 			topViewRateVideoPost = post
 			ps.TopViewRateVideoID = topViewRateVideoPost.ObjectID
 			ps.TopViewRatePercent = topViewRateVideoPost.Data.ViewRate
 
 		}
 
-		if post.Data.EngagementRate > topEngagementRateVideoPost.Data.EngagementRate {
+		if post.Data.EngagementRate >= topEngagementRateVideoPost.Data.EngagementRate {
 			topEngagementRateVideoPost = post
 			ps.TopEngagementRateVideoID = topEngagementRateVideoPost.ObjectID
 			ps.TopEngagementRatePercent = topEngagementRateVideoPost.Data.EngagementRate
@@ -71,8 +71,6 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 
 	ps.OverallViewRate = calculateViewRate(totalUniqueViewers, totalPeopleReached)
 	ps.EngagementRate = calculateEngagementRate(totalPostConsumptions, totalPostEngagements, totalPeopleReached)
-	ps.TopEngagementRateVideoID = topEngagementRateVideoPost.ObjectID
-	ps.TopViewRateVideoID = topViewRateVideoPost.ObjectID
 	ps.VideosPosted = len(videosUsed)
 
 	return ps
