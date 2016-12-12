@@ -11,8 +11,8 @@ func TestTotalReactionsBreakdown(t *testing.T) {
 	t.Run("Sort", func(t *testing.T) {
 		t.Run("SortsByValue", func(t *testing.T) {
 			var totalReactionsBreakdown fbintegration.TotalReactionsBreakdown
-			totalReactionsBreakdown = append(totalReactionsBreakdown, fbintegration.ReactionsBreakdown{"WOW", 5})
 			totalReactionsBreakdown = append(totalReactionsBreakdown, fbintegration.ReactionsBreakdown{"WOW", 1})
+			totalReactionsBreakdown = append(totalReactionsBreakdown, fbintegration.ReactionsBreakdown{"WOW", 5})
 
 			sort.Sort(&totalReactionsBreakdown)
 
