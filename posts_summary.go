@@ -2,6 +2,7 @@ package fbintegration
 
 import (
 	"encoding/json"
+	"sort"
 )
 
 type (
@@ -69,6 +70,11 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 		totalReactionsBreakdown = processTotalReactionBreakdown(totalReactionsBreakdown, post.Data.ReactionsBreakdown)
 	}
 
+	sort.Sort(totalReactionsBreakdown)
+	topReaction, err := totalReactionsBreakdown.First()
+	if err == nil {
+		ps.TopReaction = topReaction.Type
+	}
 	ps.OverallViewRate = calculateViewRate(totalUniqueViewers, totalPeopleReached)
 	ps.EngagementRate = calculateEngagementRate(totalPostConsumptions, totalPostEngagements, totalPeopleReached)
 	ps.VideosPosted = len(videosUsed)
@@ -84,6 +90,8 @@ func processTotalReactionBreakdown(totalReactionBreakdown TotalReactionsBreakdow
 			totalReactionBreakdown = append(totalReactionBreakdown, ReactionsBreakdown{reactionType, amount})
 		}
 	}
+
+	sort.Sort(totalReactionBreakdown)
 
 	return totalReactionBreakdown
 }

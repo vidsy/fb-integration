@@ -1,5 +1,9 @@
 package fbintegration
 
+import (
+	"errors"
+)
+
 type (
 	// TotalReactionsBreakdown slice of ReactionsBreakdowns
 	TotalReactionsBreakdown []ReactionsBreakdown
@@ -19,7 +23,16 @@ func (p TotalReactionsBreakdown) Len() int {
 // Less interface method for sorting, finds which is lower out of the
 // two given items.
 func (p TotalReactionsBreakdown) Less(i, j int) bool {
-	return p[i].Value < p[j].Value
+	return p[i].Value > p[j].Value
+}
+
+// First returns the first element or nil.
+func (p TotalReactionsBreakdown) First() (*ReactionsBreakdown, error) {
+	if len(p) > 0 {
+		return &p[0], nil
+	}
+
+	return nil, errors.New("No items in slice")
 }
 
 // HasType checks if the map has a key for a given type.
