@@ -35,8 +35,9 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 
 	topViewRateVideoPost := posts[0]
 	topEngagementRateVideoPost := posts[0]
-
 	videosUsed := make(map[string]*interface{})
+
+	ps.TopReaction = "LIKE"
 
 	for _, post := range posts {
 		ps.CampaignReach += post.Data.PeopleReached
@@ -72,7 +73,7 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 
 	sort.Sort(totalReactionsBreakdown)
 	topReaction, err := totalReactionsBreakdown.First()
-	if err == nil {
+	if err == nil && topReaction.Value > 0 {
 		ps.TopReaction = topReaction.Type
 	}
 	ps.OverallViewRate = calculateViewRate(totalUniqueViewers, totalPeopleReached)
