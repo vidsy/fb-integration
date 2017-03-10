@@ -43,15 +43,15 @@ func NewDemographicSplitFromResult(results *facebookLib.Result, total float64) D
 }
 
 // Push comment pending
-func (as *DemographicSplit) Push(demographicSplitItem DemographicSplitItem) {
-	as.Data = append(as.Data, demographicSplitItem)
+func (d *DemographicSplit) Push(demographicSplitItem DemographicSplitItem) {
+	d.Data = append(d.Data, demographicSplitItem)
 }
 
-// MarshalJSON comment pending
-func (as DemographicSplit) MarshalJSON() ([]byte, error) {
+// BuildMap builds a map representation of the breakdown.
+func (d DemographicSplit) BuildMap() (map[string]map[string]float64, error) {
 	demographicSplit := map[string]map[string]float64{}
 
-	for _, demographicSplitItem := range as.Data {
+	for _, demographicSplitItem := range d.Data {
 		_, exists := demographicSplit[demographicSplitItem.AgeRange]
 
 		if !exists {
@@ -61,13 +61,23 @@ func (as DemographicSplit) MarshalJSON() ([]byte, error) {
 		value, err := strconv.ParseFloat(demographicSplitItem.Value, 64)
 
 		if err != nil {
-			return []byte{}, err
+			return nil, err
 		}
 
-		demographicSplit[demographicSplitItem.AgeRange][demographicSplitItem.Gender] = (value / as.Total) * 100
+		demographicSplit[demographicSplitItem.AgeRange][demographicSplitItem.Gender] = (value / d.Total) * 100
 	}
 
-	json, err := json.Marshal(demographicSplit)
+	return demographicSplit, nil
+}
+
+// MarshalJSON comment pending
+func (d DemographicSplit) MarshalJSON() ([]byte, error) {
+	demographicSplitMap, err := d.BuildMap()
+	if err != nil {
+		return []byte{}, err
+	}
+
+	json, err := json.Marshal(demographicSplitMap)
 
 	if err != nil {
 		return []byte{}, err
