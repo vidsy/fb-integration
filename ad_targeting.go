@@ -138,7 +138,7 @@ func NewAdTargetingFromResult(results *facebookLib.Result) AdTargeting {
 	}
 
 	adTargeting.DevicePlatforms = adTargetingPayload.Targeting.DevicePlatforms
-	adTargeting.PublisherPlatforms = AdTargetingPayload.PublisherPlatforms
+	adTargeting.PublisherPlatforms = adTargetingPayload.Targeting.PublisherPlatforms
 	adTargeting.FacebookPositions = adTargetingPayload.Targeting.FacebookPositions
 	adTargeting.InstagramPositions = adTargetingPayload.Targeting.InstagramPositions
 
