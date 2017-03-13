@@ -137,10 +137,10 @@ func NewAdTargetingFromResult(results *facebookLib.Result) AdTargeting {
 		adTargeting.Genders.Female = true
 	}
 
-	adTargeting.DevicePlatforms = adTargetingPayload.DevicePlatforms
+	adTargeting.DevicePlatforms = adTargetingPayload.Targeting.DevicePlatforms
 	adTargeting.PublisherPlatforms = AdTargetingPayload.PublisherPlatforms
-	adTargeting.FacebookPositions = adTargetingPayload.FacebookPositions
-	adTargeting.InstagramPositions = adTargetingPayload.InstagramPositions
+	adTargeting.FacebookPositions = adTargetingPayload.Targeting.FacebookPositions
+	adTargeting.InstagramPositions = adTargetingPayload.Targeting.InstagramPositions
 
 	return adTargeting
 }
