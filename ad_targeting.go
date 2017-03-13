@@ -2,43 +2,53 @@ package fbintegration
 
 import (
 	facebookLib "github.com/huandu/facebook"
+
 	"github.com/pariz/gountries"
 )
 
 type (
 	// AdTargeting comment pending
 	AdTargeting struct {
-		Locations []string `json:"locations"`
-		AgeMin    int      `json:"age_min"`
-		AgeMax    int      `json:"age_max"`
-		Interests []string `json:"interests"`
-		Genders   struct {
+		AgeMin             int      `json:"age_min"`
+		AgeMax             int      `json:"age_max"`
+		DevicePlatforms    []string `json:"device_platforms"`
+		PublisherPlatforms []string `json:"publisher_platforms"`
+		InstagramPositions []string `json:"instagram_positions"`
+		FacebookPositions  []string `json:"facebook_postitions"`
+		Genders            struct {
 			Male   bool `json:"male"`
 			Female bool `json:"female"`
 		} `json:"genders"`
+		Interests []string `json:"interests"`
+		Locations []string `json:"locations"`
 	}
 
 	// AdTargetingPayload comment pending
 	AdTargetingPayload struct {
 		Targeting struct {
-			GeoLocations struct {
-				Countries     []string `facebook:"countries"`
-				CountryGroups []string `facebook"country_groups"`
-				Cities        []struct {
-					Name string `facebook:"name"`
-				} `facebook:"cities"`
-			} `facebook:"geo_locations"`
-			AgeMin    int   `facebook:"age_min"`
-			AgeMax    int   `facebook:"age_max"`
-			Genders   []int `facebook:"genders"`
-			Interests []struct {
-				Name string `facebook:"name"`
-			} `facebook:"interests"`
-			FlexibleSpec []struct {
+			AgeMin             int      `facebook:"age_min"`
+			AgeMax             int      `facebook:"age_max"`
+			DevicePlatforms    []string `facebook:"device_platforms"`
+			PublisherPlatforms []string `facebook:"publisher_platforms"`
+			InstagramPositions []string `facebook:"instagram_positions"`
+			FacebookPositions  []string `facebook:"facebook_postitions"`
+			FlexibleSpec       []struct {
 				Interests []struct {
 					Name string `facebook:"name"`
 				} `facebook:"interests"`
 			} `facebook:"flexible_spec"`
+
+			Genders      []int `facebook:"genders"`
+			GeoLocations struct {
+				Countries     []string `facebook:"countries"`
+				CountryGroups []string `facebook:"country_groups"`
+				Cities        []struct {
+					Name string `facebook:"name"`
+				} `facebook:"cities"`
+			} `facebook:"geo_locations"`
+			Interests []struct {
+				Name string `facebook:"name"`
+			} `facebook:"interests"`
 		} `facebook:"targeting"`
 	}
 )
@@ -126,6 +136,11 @@ func NewAdTargetingFromResult(results *facebookLib.Result) AdTargeting {
 		adTargeting.Genders.Male = true
 		adTargeting.Genders.Female = true
 	}
+
+	adTargeting.DevicePlatforms = adTargetingPayload.Targeting.DevicePlatforms
+	adTargeting.PublisherPlatforms = adTargetingPayload.Targeting.PublisherPlatforms
+	adTargeting.FacebookPositions = adTargetingPayload.Targeting.FacebookPositions
+	adTargeting.InstagramPositions = adTargetingPayload.Targeting.InstagramPositions
 
 	return adTargeting
 }
