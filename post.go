@@ -73,23 +73,6 @@ func (p Post) GenerateTotalReactionsParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s/reactions?limit=0&summary=total_count", p.ID))
 }
 
-func parseFloat(val interface{}) float64 {
-	switch reflect.ValueOf(val).Kind() {
-	case reflect.Float64:
-		return val.(float64)
-
-	case reflect.String:
-		float64Value, err := strconv.ParseFloat(val.(string), 64)
-		if err == nil {
-			return float64Value
-		}
-
-		return float64Value
-	}
-
-	return 0
-}
-
 // ParseResults comment pending
 func (p *Post) ParseResults() {
 	p.Data = &PostData{}
@@ -199,7 +182,6 @@ func (p *Post) ParseResults() {
 
 	totalSpend := p.getAdInsightsValue("spend")
 	if totalSpend != nil {
-		fmt.Println(totalSpend)
 		p.Data.Spend = parseFloat(totalSpend)
 	}
 
@@ -319,4 +301,21 @@ func (p Post) getActionTypeTotal(actionType string) float64 {
 
 func (p Post) getReactionsTotal(result *facebookLib.Result) float64 {
 	return result.Get("summary.total_count").(float64)
+}
+
+func parseFloat(val interface{}) float64 {
+	switch reflect.ValueOf(val).Kind() {
+	case reflect.Float64:
+		return val.(float64)
+
+	case reflect.String:
+		float64Value, err := strconv.ParseFloat(val.(string), 64)
+		if err == nil {
+			return float64Value
+		}
+
+		return float64Value
+	}
+
+	return 0
 }
