@@ -3,15 +3,12 @@ package fbintegration
 import (
 	"encoding/json"
 	"fmt"
-	"reflect"
-	"strconv"
-	"time"
 
 	facebookLib "github.com/huandu/facebook"
 )
 
 type (
-	// Post comment pending
+	// Post contains details for a given post including the name, id and insights.
 	Post struct {
 		Name     string       `facebook:"message"   json:"name"`
 		ID       string       `facebook:"id"        json:"post_id"`
@@ -23,7 +20,7 @@ type (
 	}
 )
 
-// NewPostFromResult comment pending
+// NewPostFromResult creates a new Post struct from a facebookLib.Result.
 func NewPostFromResult(result facebookLib.Result) Post {
 	var post Post
 	post.Results = &PostResults{}
@@ -31,17 +28,17 @@ func NewPostFromResult(result facebookLib.Result) Post {
 	return post
 }
 
-// GenerateCommentsParams comment pending
+// GenerateCommentsParams create the params for getting comments for a post.
 func (p Post) GenerateCommentsParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s/comments?summary=true&limit=0&period=lifetime", p.ID))
 }
 
-// GenerateInsightParams comment pending
+// GenerateInsightParams create the params for getting insights for a post from the Graph API.
 func (p Post) GenerateInsightParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s/insights/post_video_views_unique,post_engaged_users,post_video_complete_views_organic,post_video_complete_views_paid,post_consumptions,post_impressions,post_impressions_paid,post_impressions_unique,post_impressions_paid_unique,post_video_views,post_video_views_paid,post_video_views_organic,post_video_view_time,post_video_avg_time_watched,post_stories_by_action_type?period=lifetime&limit=20", p.ID))
 }
 
-// GenerateParams comment pending
+// GenerateParams creates the params for getting information on a post.
 func (p *Post) GenerateParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"))
 }
@@ -52,7 +49,7 @@ func (p *Post) GeneratePostParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "created_time,shares"))
 }
 
-// GenerateReactionBreakdownParams comment pending
+// GenerateReactionBreakdownParams creates params for getting the reaction breakdown for a post.
 func (p Post) GenerateReactionBreakdownParams() []BatchParams {
 	var params []BatchParams
 
@@ -63,146 +60,25 @@ func (p Post) GenerateReactionBreakdownParams() []BatchParams {
 	return params
 }
 
-// GenerateSharesParams comment pending
+// GenerateSharesParams creates params for getting the shared count for a post.
 func (p Post) GenerateSharesParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s/sharedposts", p.ID))
 }
 
-// GenerateTotalReactionsParams comment pending
+// GenerateTotalReactionsParams creates params for gettting the total reaction count.
 func (p Post) GenerateTotalReactionsParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s/reactions?limit=0&summary=total_count", p.ID))
 }
 
-// ParseResults comment pending
-func (p *Post) ParseResults() {
-	p.Data = &PostData{}
-
-	sampledPeopleReached := p.getAdInsightsValue("reach")
-	if sampledPeopleReached != nil {
-		p.Data.SampledPeopleReached = parseFloat(sampledPeopleReached)
-	}
-
-	peopleReached := p.getInsightsValue("post_impressions_unique")
-	if peopleReached != nil {
-		p.Data.PeopleReached = parseFloat(peopleReached["value"])
-	}
-
-	peopleReachedPaid := p.getInsightsValue("post_impressions_paid_unique")
-	if peopleReachedPaid != nil {
-		p.Data.PeopleReachedPaid = parseFloat(peopleReachedPaid["value"])
-	}
-
-	p.Data.PeopleReachedOrganic = (p.Data.PeopleReached - p.Data.PeopleReachedPaid)
-
-	p.Data.Reactions = p.getReactionsTotal(p.Results.TotalReactions)
-
-	p.Data.ReactionsBreakdown = make(map[string]float64)
-	for i, reactionType := range p.ReactionTypes() {
-		p.Data.ReactionsBreakdown[reactionType] = p.getReactionsTotal(p.Results.ReactionBreakdown[i])
-	}
-
-	p.Data.Comments = p.getComments()
-	p.Data.Shares = p.getShares()
-
-	postConsumptions := p.getInsightsValue("post_consumptions")
-	if postConsumptions != nil {
-		p.Data.PostConsumptions = parseFloat(postConsumptions["value"])
-	}
-
-	p.Data.PostEngagements = p.Data.Reactions + p.Data.Comments + p.Data.Shares
-
-	engagedUsers := p.getInsightsValue("post_engaged_users")
-	if engagedUsers != nil {
-		p.Data.EngagedUsers = parseFloat(engagedUsers["value"])
-	}
-
-	if p.Data.PeopleReached > 0 {
-		p.Data.EngagementRate = (((p.Data.PostConsumptions + p.Data.PostEngagements) / p.Data.PeopleReached) * 100)
-	}
-
-	p.Data.Demographic = p.generateDemographic()
-	p.Data.Targeting = p.generateTargeting()
-
-	paidReach := p.getInsightsValue("post_impressions_paid_unique")
-	if paidReach != nil {
-		p.Data.PaidReach = parseFloat(paidReach["value"])
-	}
-
-	videoViews := p.getInsightsValue("post_video_views")
-	if videoViews != nil {
-		p.Data.VideoViews = parseFloat(videoViews["value"])
-	}
-
-	videoViewsOrganic := p.getInsightsValue("post_video_views_organic")
-	if videoViewsOrganic != nil {
-		p.Data.VideoViewsOrganic = parseFloat(videoViewsOrganic["value"])
-	}
-
-	videoViewsPaid := p.getInsightsValue("post_video_views_paid")
-	if videoViewsPaid != nil {
-		p.Data.VideoViewsPaid = parseFloat(videoViewsPaid["value"])
-	}
-
-	videoViewsUnique := p.getInsightsValue("post_video_views_unique")
-	if videoViewsUnique != nil {
-		p.Data.UniqueViewers = parseFloat(videoViewsUnique["value"])
-	}
-
-	if p.Data.PeopleReached > 0 {
-		p.Data.ViewRate = (p.Data.UniqueViewers / p.Data.PeopleReached) * 100
-	}
-
-	viewsToNinetyFivePercentCompleteOrganic := p.getInsightsValue("post_video_complete_views_organic")
-	if viewsToNinetyFivePercentCompleteOrganic != nil {
-		p.Data.ViewsToNinetyFivePercentCompleteOrganic = parseFloat(viewsToNinetyFivePercentCompleteOrganic["value"])
-	}
-
-	viewsToNinetyFivePercentCompletePaid := p.getInsightsValue("post_video_complete_views_paid")
-	if viewsToNinetyFivePercentCompletePaid != nil {
-		p.Data.ViewsToNinetyFivePercentCompletePaid = parseFloat(viewsToNinetyFivePercentCompletePaid["value"])
-	}
-
-	p.Data.ViewsToNinetyFivePercentComplete = p.Data.ViewsToNinetyFivePercentCompletePaid + p.Data.ViewsToNinetyFivePercentCompleteOrganic
-
-	if p.Data.VideoViews > 0 {
-		p.Data.PercentViewsCompleted = (p.Data.ViewsToNinetyFivePercentComplete / p.Data.VideoViews) * 100
-	}
-
-	averageDurationWatched := p.getInsightsValue("post_video_avg_time_watched")
-	if averageDurationWatched != nil {
-		total := parseFloat(averageDurationWatched["value"])
-		p.Data.AverageDurationWatched = (total / 1000)
-	}
-
-	overallMinutesViewed := p.getInsightsValue("post_video_view_time")
-	if overallMinutesViewed != nil {
-		total := parseFloat(overallMinutesViewed["value"])
-		p.Data.OverallMinutesViewed = ((total / 1000) / 60)
-	}
-
-	totalSpend := p.getAdInsightsValue("spend")
-	if totalSpend != nil {
-		p.Data.Spend = parseFloat(totalSpend)
-	}
-
-	if p.Data.VideoViewsOrganic > 0 || p.Data.VideoViewsPaid > 0 {
-		p.Data.VideoViewCost = p.Data.Spend / (p.Data.VideoViewsOrganic + p.Data.VideoViewsPaid)
-	}
-
-	createdTimestamp, err := p.getCreatedTimestamp()
-	if err == nil {
-		p.Data.CreatedTimestamp = createdTimestamp
-	}
-}
-
-// ReactionTypes comment pending
+// ReactionTypes slice of currently supported reaction type for facebook posts.
 func (p Post) ReactionTypes() []string {
 	return []string{
 		"LIKE", "LOVE", "WOW", "HAHA", "SAD", "ANGRY", "THANKFUL",
 	}
 }
 
-// ToJSON comment pending
+// ToJSON marshal the current struct into a byte array then
+// return a string representation of that.
 func (p *Post) ToJSON() (string, error) {
 	b, err := json.Marshal(p)
 	if err != nil {
@@ -210,112 +86,4 @@ func (p *Post) ToJSON() (string, error) {
 	}
 
 	return string(b), nil
-}
-
-func (p Post) generateDemographic() DemographicSplit {
-	return NewDemographicSplitFromResult(p.Results.AdBreakdownInsights, p.Data.SampledPeopleReached)
-}
-
-func (p Post) generateTargeting() AdTargeting {
-	return NewAdTargetingFromResult(p.Results.Targeting)
-}
-
-func (p Post) getComments() float64 {
-	comments := p.Results.Comments.Get("summary.total_count")
-	if comments == nil {
-		return 0
-	}
-
-	return comments.(float64)
-
-}
-
-func (p Post) getCreatedTimestamp() (time.Time, error) {
-	layout := "2006-01-02T15:04:05-0700"
-	t := p.Results.PostData.Get("created_time")
-
-	return time.Parse(layout, t.(string))
-}
-
-func (p Post) getShares() float64 {
-	shares := p.Results.PostData.Get("shares.count")
-	if shares == nil {
-		return 0
-	}
-
-	return shares.(float64)
-}
-
-func (p Post) getInsightsValue(key string) map[string]interface{} {
-	data := p.Results.Insights.Get("data")
-	slice := reflect.ValueOf(data)
-
-	if slice.IsValid() {
-		for i := 0; i < slice.Len(); i++ {
-			query := fmt.Sprintf("data.%d.name", i)
-			name := p.Results.Insights.Get(query)
-
-			if name == key {
-				query = fmt.Sprintf("data.%d.values", i)
-				values := p.Results.Insights.Get(query).([]interface{})
-
-				if len(values) > 0 {
-					query = fmt.Sprintf("data.%d.values.0", i)
-					return p.Results.Insights.Get(query).(map[string]interface{})
-				}
-
-				return nil
-			}
-		}
-	}
-
-	return nil
-}
-
-func (p Post) getAdInsightsValue(key string) interface{} {
-	query := fmt.Sprintf("data.0.%s", key)
-	value := p.Results.AdInsights.Get(query)
-
-	if value != nil {
-		return value
-	}
-
-	return nil
-}
-
-func (p Post) getActionTypeTotal(actionType string) float64 {
-	postStories := p.getInsightsValue("post_stories_by_action_type")
-	if postStories["value"] == nil {
-		return 0
-	}
-
-	reflectedMap := reflect.ValueOf(postStories["value"])
-	valuesMap := reflectedMap.Interface().(map[string]interface{})
-	value := valuesMap[actionType]
-
-	if value != nil {
-		return valuesMap[actionType].(float64)
-	}
-	return 0
-}
-
-func (p Post) getReactionsTotal(result *facebookLib.Result) float64 {
-	return result.Get("summary.total_count").(float64)
-}
-
-func parseFloat(val interface{}) float64 {
-	switch reflect.ValueOf(val).Kind() {
-	case reflect.Float64:
-		return val.(float64)
-
-	case reflect.String:
-		float64Value, err := strconv.ParseFloat(val.(string), 64)
-		if err == nil {
-			return float64Value
-		}
-
-		return float64Value
-	}
-
-	return 0
 }
