@@ -64,7 +64,12 @@ func (d DemographicSplit) BuildMap() (map[string]map[string]float64, error) {
 			return nil, err
 		}
 
-		demographicSplit[demographicSplitItem.AgeRange][demographicSplitItem.Gender] = (value / d.Total) * 100
+		var percentage float64
+		if d.Total > 0 {
+			percentage = (value / d.Total) * 100
+		}
+
+		demographicSplit[demographicSplitItem.AgeRange][demographicSplitItem.Gender] = percentage
 	}
 
 	return demographicSplit, nil
