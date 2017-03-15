@@ -53,6 +53,19 @@ type (
 	}
 )
 
+// AdType returns the ad type based on publisher platform and position.
+func (at AdTargeting) AdType() string {
+	if len(at.InstagramPositions) > 0 {
+		for _, position := range at.InstagramPositions {
+			if position == "story" {
+				return "instagram_story"
+			}
+		}
+	}
+
+	return "facebook"
+}
+
 // HasInterests comment pending
 func (atp AdTargetingPayload) HasInterests() bool {
 	return len(atp.Targeting.Interests) > 0
