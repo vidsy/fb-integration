@@ -1,13 +1,14 @@
 package fbintegration
 
 import (
+	"encoding/json"
 	"fmt"
 
 	facebookLib "github.com/huandu/facebook"
 )
 
 type (
-	// Post comment pending
+	// Post contains details for a given post including the name, id and insights.
 	Post struct {
 		Name     string       `facebook:"message"   json:"name"`
 		ID       string       `facebook:"id"        json:"post_id"`
@@ -19,7 +20,7 @@ type (
 	}
 )
 
-// NewPostFromResult comment pending
+// NewPostFromResult creates a new Post struct from a facebookLib.Result.
 func NewPostFromResult(result facebookLib.Result) Post {
 	var post Post
 	post.Results = &PostResults{}
@@ -27,17 +28,17 @@ func NewPostFromResult(result facebookLib.Result) Post {
 	return post
 }
 
-// GenerateCommentsParams comment pending
+// GenerateCommentsParams create the params for getting comments for a post.
 func (p Post) GenerateCommentsParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s/comments?summary=true&limit=0&period=lifetime", p.ID))
 }
 
-// GenerateInsightParams comment pending
+// GenerateInsightParams create the params for getting insights for a post from the Graph API.
 func (p Post) GenerateInsightParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s/insights/post_video_views_unique,post_engaged_users,post_video_complete_views_organic,post_video_complete_views_paid,post_consumptions,post_impressions,post_impressions_paid,post_impressions_unique,post_impressions_paid_unique,post_video_views,post_video_views_paid,post_video_views_organic,post_video_view_time,post_video_avg_time_watched,post_stories_by_action_type?period=lifetime&limit=20", p.ID))
 }
 
-// GenerateParams comment pending
+// GenerateParams creates the params for getting information on a post.
 func (p *Post) GenerateParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"))
 }
@@ -48,7 +49,7 @@ func (p *Post) GeneratePostParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "created_time,shares"))
 }
 
-// GenerateReactionBreakdownParams comment pending
+// GenerateReactionBreakdownParams creates params for getting the reaction breakdown for a post.
 func (p Post) GenerateReactionBreakdownParams() []BatchParams {
 	var params []BatchParams
 
@@ -59,12 +60,12 @@ func (p Post) GenerateReactionBreakdownParams() []BatchParams {
 	return params
 }
 
-// GenerateSharesParams comment pending
+// GenerateSharesParams creates params for getting the shared count for a post.
 func (p Post) GenerateSharesParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s/sharedposts", p.ID))
 }
 
-// GenerateTotalReactionsParams comment pending
+// GenerateTotalReactionsParams creates params for gettting the total reaction count.
 func (p Post) GenerateTotalReactionsParams() BatchParams {
 	return NewBatchParams(fmt.Sprintf("%s/reactions?limit=0&summary=total_count", p.ID))
 }
@@ -74,4 +75,15 @@ func (p Post) ReactionTypes() []string {
 	return []string{
 		"LIKE", "LOVE", "WOW", "HAHA", "SAD", "ANGRY", "THANKFUL",
 	}
+}
+
+// ToJSON marshal the current struct into a byte array then
+// return a string representation of that.
+func (p *Post) ToJSON() (string, error) {
+	b, err := json.Marshal(p)
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
 }
