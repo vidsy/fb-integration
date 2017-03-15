@@ -42,7 +42,7 @@ func (a *Ad) CreateBatchParams() BatchParams {
 
 // CreateInsightParams comment pending
 func (a *Ad) CreateInsightParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s/insights?fields=unique_actions,reach,spend&date_preset=lifetime", a.ID))
+	return NewBatchParams(fmt.Sprintf("%s/insights?fields=total_unique_actions,total_actions,video_p95_watched_actions,video_avg_sec_watched_actions,unique_actions,reach,spend&date_preset=lifetime", a.ID))
 }
 
 // CreateBreakdownInsightParams comment pending

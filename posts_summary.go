@@ -8,6 +8,7 @@ import (
 type (
 	// PostsSummary comment pending
 	PostsSummary struct {
+		PrimaryAdType            string  `json:"primary_ad_type"`
 		VideosPosted             int     `json:"videos_posted"`
 		CampaignReach            float64 `json:"campaign_reach"`
 		CampaignViews            float64 `json:"campaign_views"`
@@ -39,6 +40,8 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 
 	ps.TopReaction = "LIKE"
 
+	var primaryAdType string
+
 	for _, post := range posts {
 		ps.CampaignReach += post.Data.PeopleReached
 		ps.CampaignViews += post.Data.VideoViews
@@ -69,6 +72,10 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 		}
 
 		totalReactionsBreakdown = processTotalReactionBreakdown(totalReactionsBreakdown, post.Data.ReactionsBreakdown)
+
+		if primaryAdType == "" || post.AdType == "facebook" {
+			primaryAdType = post.AdType
+		}
 	}
 
 	sort.Sort(totalReactionsBreakdown)
@@ -79,6 +86,7 @@ func NewPostsSummary(posts []*Post) PostsSummary {
 	ps.OverallViewRate = calculateViewRate(totalUniqueViewers, totalPeopleReached)
 	ps.EngagementRate = calculateEngagementRate(totalPostConsumptions, totalPostEngagements, totalPeopleReached)
 	ps.VideosPosted = len(videosUsed)
+	ps.PrimaryAdType = primaryAdType
 
 	return ps
 }

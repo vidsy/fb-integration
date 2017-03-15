@@ -10,6 +10,7 @@ import (
 type (
 	// Post contains details for a given post including the name, id and insights.
 	Post struct {
+		AdType   string       `json:"ad_type"`
 		Name     string       `facebook:"message"   json:"name"`
 		ID       string       `facebook:"id"        json:"post_id"`
 		AdID     string       `json:"ad_id"`
