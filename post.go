@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"strings"
+
 	facebookLib "github.com/huandu/facebook"
 )
 
@@ -31,23 +33,71 @@ func NewPostFromResult(result facebookLib.Result) Post {
 
 // GenerateCommentsParams create the params for getting comments for a post.
 func (p Post) GenerateCommentsParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s/comments?summary=true&limit=0&period=lifetime", p.ID))
+	uri := fmt.Sprintf("%s/comments?summary=true&limit=0&period=lifetime", p.ID)
+
+	return NewBatchParams(uri)
 }
 
 // GenerateInsightParams create the params for getting insights for a post from the Graph API.
 func (p Post) GenerateInsightParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s/insights/post_video_views_unique,post_engaged_users,post_video_complete_views_organic,post_video_complete_views_paid,post_consumptions,post_impressions,post_impressions_paid,post_impressions_unique,post_impressions_paid_unique,post_video_views,post_video_views_paid,post_video_views_organic,post_video_view_time,post_video_avg_time_watched,post_stories_by_action_type?period=lifetime&limit=20", p.ID))
+	fields := []string{
+		"post_consumptions",
+		"post_engaged_users",
+		"post_impressions",
+		"post_impressions_paid",
+		"post_impressions_paid_unique",
+		"post_impressions_unique",
+		"post_stories_by_action_type",
+		"post_video_avg_time_watched",
+		"post_video_complete_views_organic",
+		"post_video_complete_views_paid",
+		"post_video_view_time",
+		"post_video_views",
+		"post_video_views_organic",
+		"post_video_views_paid",
+		"post_video_views_unique",
+	}
+
+	uri := fmt.Sprintf(
+		"%s/insights/%s?period=lifetime&limit=20",
+		p.ID,
+		strings.Join(fields, ","),
+	)
+
+	return NewBatchParams(uri)
 }
 
 // GenerateParams creates the params for getting information on a post.
 func (p *Post) GenerateParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "object_id,message"))
+	fields := []string{
+		"object_id",
+		"message",
+	}
+
+	uri := fmt.Sprintf(
+		"%s?fields=%s",
+		p.ID,
+		strings.Join(fields, ","),
+	)
+
+	return NewBatchParams(uri)
 }
 
 // GeneratePostParams creates params for getting back data on a
 // particular post.
 func (p *Post) GeneratePostParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s?fields=%s", p.ID, "created_time,shares"))
+	fields := []string{
+		"created_time",
+		"shares",
+	}
+
+	uri := fmt.Sprintf(
+		"%s?fields=%s",
+		p.ID,
+		strings.Join(fields, ","),
+	)
+
+	return NewBatchParams(uri)
 }
 
 // GenerateReactionBreakdownParams creates params for getting the reaction breakdown for a post.
@@ -55,7 +105,13 @@ func (p Post) GenerateReactionBreakdownParams() []BatchParams {
 	var params []BatchParams
 
 	for _, reaction := range p.ReactionTypes() {
-		params = append(params, NewBatchParams(fmt.Sprintf("%s/reactions?limit=0&summary=total_count&type=%s", p.ID, reaction)))
+		uri := fmt.Sprintf(
+			"%s/reactions?limit=0&summary=total_count&type=%s",
+			p.ID,
+			reaction,
+		)
+
+		params = append(params, NewBatchParams(uri))
 	}
 
 	return params
@@ -74,7 +130,13 @@ func (p Post) GenerateTotalReactionsParams() BatchParams {
 // ReactionTypes slice of currently supported reaction type for facebook posts.
 func (p Post) ReactionTypes() []string {
 	return []string{
-		"LIKE", "LOVE", "WOW", "HAHA", "SAD", "ANGRY", "THANKFUL",
+		"ANGRY",
+		"HAHA",
+		"LIKE",
+		"LOVE",
+		"SAD",
+		"THANKFUL",
+		"WOW",
 	}
 }
 
