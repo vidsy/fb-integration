@@ -1,8 +1,9 @@
 package fbintegration_test
 
 import (
-	"github.com/vidsy/fbintegration"
 	"testing"
+
+	"github.com/vidsy/fbintegration"
 )
 
 func TestReactionsBreakdown(t *testing.T) {
@@ -12,7 +13,9 @@ func TestReactionsBreakdown(t *testing.T) {
 			reactionsBreakdown.Increment(19)
 
 			if reactionsBreakdown.Value != 20 {
-				t.Fatalf("Expected .Value to be 20, got: %.2f", reactionsBreakdown.Value)
+				t.Fatalf(
+					"Expected .Value to be 20, got: %.2f", reactionsBreakdown.Value,
+				)
 			}
 		})
 	})

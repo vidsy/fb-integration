@@ -55,7 +55,10 @@ func (d DemographicSplit) BuildMap() (map[string]map[string]float64, error) {
 		_, exists := demographicSplit[demographicSplitItem.AgeRange]
 
 		if !exists {
-			demographicSplit[demographicSplitItem.AgeRange] = map[string]float64{"male": 0, "female": 0}
+			demographicSplit[demographicSplitItem.AgeRange] = map[string]float64{
+				"male":   0,
+				"female": 0,
+			}
 		}
 
 		value, err := strconv.ParseFloat(demographicSplitItem.Value, 64)

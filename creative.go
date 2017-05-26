@@ -2,6 +2,7 @@ package fbintegration
 
 import (
 	"fmt"
+	"strings"
 
 	facebookLib "github.com/huandu/facebook"
 )
@@ -17,10 +18,12 @@ type (
 		PostID          string                  `facebook:"effective_object_story_id"`
 	}
 
+	// CreativeObjectStorySpec comment pending
 	CreativeObjectStorySpec struct {
 		VideoData CreativeObjectVideoData `facebook:"video_data"`
 	}
 
+	// CreativeObjectVideoData comment pending
 	CreativeObjectVideoData struct {
 		VideoID     string `facebook:"video_id"`
 		Description string `facebook:"description"`
@@ -36,7 +39,16 @@ func NewCreativeFromResult(result facebookLib.Result) Creative {
 
 // GenerateParams comments pending
 func (c *Creative) GenerateParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s?fields=%s", c.ID, "object_id,object_type,effective_object_story_id,object_story_spec"))
+	fields := []string{
+		"object_id",
+		"object_type",
+		"effective_object_story_id",
+		"object_story_spec",
+	}
+
+	uri := fmt.Sprintf("%s?fields=%s", c.ID, strings.Join(fields, ","))
+
+	return NewBatchParams(uri)
 }
 
 // IsVideo comment pending

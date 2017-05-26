@@ -37,7 +37,6 @@ type (
 					Name string `facebook:"name"`
 				} `facebook:"interests"`
 			} `facebook:"flexible_spec"`
-
 			Genders      []int `facebook:"genders"`
 			GeoLocations struct {
 				Countries     []string `facebook:"countries"`
@@ -113,7 +112,9 @@ func NewAdTargetingFromResult(results *facebookLib.Result) AdTargeting {
 	}
 
 	if adTargetingPayload.HasFlexibleInterests() {
-		adTargeting.Interests = append(adTargeting.Interests, adTargetingPayload.FlexibleInterests()...)
+		adTargeting.Interests = append(
+			adTargeting.Interests, adTargetingPayload.FlexibleInterests()...,
+		)
 	}
 
 	if len(targeting.GeoLocations.Countries) > 0 {
@@ -122,7 +123,9 @@ func NewAdTargetingFromResult(results *facebookLib.Result) AdTargeting {
 			if err != nil {
 				adTargeting.Locations = append(adTargeting.Locations, country)
 			} else {
-				adTargeting.Locations = append(adTargeting.Locations, countryName.Name.Common)
+				adTargeting.Locations = append(
+					adTargeting.Locations, countryName.Name.Common,
+				)
 			}
 		}
 	}
