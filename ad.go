@@ -2,6 +2,9 @@ package fbintegration
 
 import (
 	"fmt"
+
+	"strings"
+
 	facebookLib "github.com/huandu/facebook"
 )
 
@@ -25,32 +28,84 @@ func NewAd(result *facebookLib.Result) Ad {
 	result.DecodeField("creative.id", &creativeID)
 	result.DecodeField("adset.id", &adsetID)
 
-	ad := Ad{
-		id,
-		adsetID,
-		&Creative{ID: creativeID},
-		&Post{},
+	return Ad{
+		ID:       id,
+		AdsetID:  adsetID,
+		Creative: &Creative{ID: creativeID},
+		Post:     &Post{},
 	}
-
-	return ad
 }
 
 // CreateBatchParams comment pending
 func (a *Ad) CreateBatchParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s?fields=object_id,object_type,effective_object_story_id", a.Creative.ID))
+	fields := []string{
+		"effective_object_story_id",
+		"object_id",
+		"object_type",
+	}
+
+	uri := fmt.Sprintf(
+		"%s?fields=%s",
+		a.Creative.ID,
+		strings.Join(fields, ","),
+	)
+
+	return NewBatchParams(uri)
 }
 
 // CreateInsightParams comment pending
 func (a *Ad) CreateInsightParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s/insights?fields=total_unique_actions,total_actions,video_p95_watched_actions,video_avg_sec_watched_actions,unique_actions,reach,spend&date_preset=lifetime", a.ID))
+	fields := []string{
+		"reach",
+		"spend",
+		"total_actions",
+		"total_unique_actions",
+		"unique_actions",
+		"video_avg_sec_watched_actions",
+		"video_p95_watched_actions",
+	}
+
+	uri := fmt.Sprintf(
+		"%s/insights?fields=%s&date_preset=lifetime",
+		a.ID,
+		strings.Join(fields, ","),
+	)
+
+	return NewBatchParams(uri)
 }
 
 // CreateBreakdownInsightParams comment pending
 func (a *Ad) CreateBreakdownInsightParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s/insights?fields=reach&date_preset=lifetime&breakdowns=age,gender", a.ID))
+	fields := []string{
+		"reach",
+	}
+
+	breakdowns := []string{
+		"age",
+		"gender",
+	}
+
+	uri := fmt.Sprintf(
+		"%s/insights?fields=%s&date_preset=lifetime&breakdowns=%s",
+		a.ID,
+		strings.Join(fields, ","),
+		strings.Join(breakdowns, ","),
+	)
+
+	return NewBatchParams(uri)
 }
 
 // CreateTargetingParams comment pending
 func (a *Ad) CreateTargetingParams() BatchParams {
-	return NewBatchParams(fmt.Sprintf("%s?fields=targeting&date_preset=lifetime", a.AdsetID))
+	fields := []string{
+		"targeting",
+	}
+
+	uri := fmt.Sprintf(
+		"%s?fields=%s&date_preset=lifetime",
+		a.AdsetID,
+		strings.Join(fields, ","),
+	)
+
+	return NewBatchParams(uri)
 }
