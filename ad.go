@@ -56,6 +56,10 @@ func (a *Ad) CreateBatchParams() BatchParams {
 // CreateInsightParams comment pending
 func (a *Ad) CreateInsightParams() BatchParams {
 	fields := []string{
+		"ctr",
+		"impressions",
+		"inline_link_click_ctr",
+		"inline_post_engagement",
 		"reach",
 		"spend",
 		"total_actions",
