@@ -8,9 +8,13 @@ type (
 		AverageDurationWatched                  float64            `json:"average_duration_watched"`
 		Comments                                float64            `json:"comments"`
 		CreatedTimestamp                        time.Time          `json:"created_timestamp"`
+		CTR                                     float64            `json:"ctr"`
 		Demographic                             DemographicSplit   `json:"demographic"`
 		EngagementRate                          float64            `json:"engagement_rate"`
 		EngagedUsers                            float64            `json:"engaged_users"`
+		Impressions                             float64            `json:"impressions"`
+		InlineLinkClickCTR                      float64            `json:"inline_link_click_ctr"`
+		InlinePostEngagement                    float64            `json:"inline_post_engagement"`
 		OverallMinutesViewed                    float64            `json:"overall_minutes_viewed"`
 		PaidReach                               float64            `json:"paid_reach"`
 		PeopleReached                           float64            `json:"people_reached"`
