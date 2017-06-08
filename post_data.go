@@ -7,6 +7,7 @@ type (
 	PostData struct {
 		AverageDurationWatched                  float64            `json:"average_duration_watched"`
 		Comments                                float64            `json:"comments"`
+		CompletitonRate                         float64            `json:"completion_rate"`
 		CreatedTimestamp                        time.Time          `json:"created_timestamp"`
 		CTR                                     float64            `json:"ctr"`
 		Demographic                             DemographicSplit   `json:"demographic"`
@@ -25,7 +26,6 @@ type (
 		PostEngagements                         float64            `json:"post_engagements"`
 		Reactions                               float64            `json:"reactions"`
 		ReactionsBreakdown                      map[string]float64 `json:"reactions_breakdown"`
-		ResultName                              string             `json:"result_name"`
 		Result                                  float64            `json:"result"`
 		SampledPeopleReached                    float64            `json:"-"`
 		Shares                                  float64            `json:"shares"`
