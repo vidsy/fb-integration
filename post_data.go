@@ -9,7 +9,9 @@ type (
 		Comments                                float64            `json:"comments"`
 		CreatedTimestamp                        time.Time          `json:"created_timestamp"`
 		CTR                                     float64            `json:"ctr"`
+		CTRRate                                 float64            `json:"ctr_rate"`
 		Demographic                             DemographicSplit   `json:"demographic"`
+		DeepEngagementRate                      float64            `json:"deep_engagement_rate"`
 		EngagementRate                          float64            `json:"engagement_rate"`
 		EngagedUsers                            float64            `json:"engaged_users"`
 		Impressions                             float64            `json:"impressions"`
@@ -25,7 +27,6 @@ type (
 		PostEngagements                         float64            `json:"post_engagements"`
 		Reactions                               float64            `json:"reactions"`
 		ReactionsBreakdown                      map[string]float64 `json:"reactions_breakdown"`
-		ResultName                              string             `json:"result_name"`
 		Result                                  float64            `json:"result"`
 		SampledPeopleReached                    float64            `json:"-"`
 		Shares                                  float64            `json:"shares"`
