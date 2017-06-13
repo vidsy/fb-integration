@@ -62,6 +62,7 @@ func (a *Ad) CreateInsightParams() BatchParams {
 		"inline_post_engagement",
 		"actions",
 		"ctr",
+		"clicks",
 		"impressions",
 		"inline_link_click_ctr",
 		"reach",
