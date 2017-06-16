@@ -28,6 +28,8 @@ type (
 		Reactions                               float64            `json:"reactions"`
 		ReactionsBreakdown                      map[string]float64 `json:"reactions_breakdown"`
 		Result                                  float64            `json:"result"`
+		ResultRate                              float64            `json:"result_rate"`
+		ResultName                              string             `json:"result"`
 		SampledPeopleReached                    float64            `json:"-"`
 		Shares                                  float64            `json:"shares"`
 		Spend                                   float64            `json:"spend"`
