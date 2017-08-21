@@ -70,7 +70,6 @@ func (a *Ad) CreateInsightParams() BatchParams {
 		"total_actions",
 		"total_unique_actions",
 		"unique_actions",
-		"video_avg_sec_watched_actions",
 		"video_p95_watched_actions",
 	}
 
