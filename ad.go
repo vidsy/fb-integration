@@ -11,10 +11,11 @@ import (
 type (
 	// Ad comment pending
 	Ad struct {
-		ID       string
-		AdsetID  string
-		Creative *Creative
-		Post     *Post
+		ID          string
+		AdsetID     string
+		Creative    *Creative
+		CreatedTime string
+		Post        *Post
 	}
 )
 
@@ -23,16 +24,19 @@ func NewAd(result *facebookLib.Result) Ad {
 	var id string
 	var creativeID string
 	var adsetID string
+	var createdTime string
 
 	result.DecodeField("id", &id)
 	result.DecodeField("creative.id", &creativeID)
 	result.DecodeField("adset.id", &adsetID)
+	result.DecodeField("created_time", &createdTime)
 
 	return Ad{
-		ID:       id,
-		AdsetID:  adsetID,
-		Creative: &Creative{ID: creativeID},
-		Post:     &Post{},
+		ID:          id,
+		AdsetID:     adsetID,
+		Creative:    &Creative{ID: creativeID},
+		CreatedTime: createdTime,
+		Post:        &Post{},
 	}
 }
 

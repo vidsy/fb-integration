@@ -34,7 +34,7 @@ func (ba *BrandAds) GenerateParams(adAccountID string) Params {
 	params := map[string]interface{}{
 		"date_preset": "lifetime",
 		"limit":       40,
-		"fields":      "fields=id,creative{id, object_id},adset",
+		"fields":      "fields=id,creative{id, object_id},adset,created_time",
 	}
 
 	return NewParams(endpoint, params)
