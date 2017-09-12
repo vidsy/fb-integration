@@ -28,13 +28,14 @@ func NewBrandAds(adAccountID string, brandID int64, brandName string) BrandAds {
 }
 
 // GenerateParams comment pending
-func (ba *BrandAds) GenerateParams(adAccountID string) Params {
+func (ba *BrandAds) GenerateParams(adAccountID string, updatedSince int64) Params {
 	endpoint := fmt.Sprintf("/act_%s/ads", adAccountID)
 
 	params := map[string]interface{}{
-		"date_preset": "lifetime",
-		"limit":       40,
-		"fields":      "fields=id,creative{id, object_id},adset",
+		"date_preset":   "lifetime",
+		"limit":         40,
+		"fields":        "fields=id,creative{id, object_id},adset",
+		"updated_since": updatedSince,
 	}
 
 	return NewParams(endpoint, params)
