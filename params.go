@@ -2,6 +2,7 @@ package fbintegration
 
 import (
 	"fmt"
+
 	facebookLib "github.com/huandu/facebook"
 )
 
@@ -15,7 +16,7 @@ type (
 	// BatchParams comment pending
 	BatchParams struct {
 		Method      string
-		RelativeUrl string
+		RelativeURL string
 	}
 )
 
@@ -26,7 +27,9 @@ func NewParams(endpoint string, params map[string]interface{}) Params {
 
 // NewBatchParams comment pending
 func NewBatchParams(endpoint string) BatchParams {
-	return BatchParams{RelativeUrl: endpoint}
+	return BatchParams{
+		RelativeURL: endpoint,
+	}
 }
 
 // ToFbParams comment pending
@@ -35,11 +38,11 @@ func (p BatchParams) ToFbParams() facebookLib.Params {
 		p.Method = "GET"
 	}
 
-	p.RelativeUrl = fmt.Sprintf("%s/%s", facebookAPIVersion, p.RelativeUrl)
+	p.RelativeURL = fmt.Sprintf("%s/%s", facebookAPIVersion, p.RelativeURL)
 
 	return facebookLib.Params{
 		"method":       p.Method,
-		"relative_url": p.RelativeUrl,
+		"relative_url": p.RelativeURL,
 	}
 }
 

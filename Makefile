@@ -1,12 +1,28 @@
-PATH_BASE ?= "/go/src/github.com/vidsy"
+BRANCH ?= "master"
 GO_BUILDER_IMAGE ?= "vidsyhq/go-builder"
+PACKAGES ?= "."
+PATH_BASE ?= "/go/src/github.com/vidsy"
 REPONAME ?= "fbintegration"
 SSH_KEY_NAME ?= "id_circleci_github"
-BRANCH = "master"
-VERSION = $(shell cat ./VERSION)
-TEST_PACKAGES = "."
+VERSION ?= $(shell cat ./VERSION)
 
 DEFAULT: test
+
+build:
+	@go build "${PACKAGES}"
+
+build-ci:
+	@docker run \
+	-it \
+	--rm \
+	-v "${CURDIR}/..":${PATH_BASE} \
+	-w ${PATH_BASE}/${REPONAME} \
+	--entrypoint=go \
+	${GO_BUILDER_IMAGE} build "${PACKAGES}"
+
+check-version:
+	@echo "=> Checking if VERSION exists as Git tag..."
+	(! git rev-list ${VERSION})
 
 install-dependencies:
 	@docker run \
@@ -14,10 +30,6 @@ install-dependencies:
 	-v "${CURDIR}":${PATH_BASE}/${REPONAME} \
 	-w ${PATH_BASE}/${REPONAME} \
 	${GO_BUILDER_IMAGE}
-
-check-version:
-	@echo "=> Checking if VERSION exists as Git tag..."
-	(! git rev-list ${VERSION})
 
 push-tag:
 	@echo "=> New tag version: ${VERSION}"
@@ -27,21 +39,23 @@ push-tag:
 	git push origin ${BRANCH} --tags
 
 test:
-	@docker run \
-	-it \
-	--rm \
-	-v "${CURDIR}/..":${PATH_BASE} \
-	-w ${PATH_BASE}/${REPONAME} \
-	--entrypoint=go \
-	${GO_BUILDER_IMAGE} test "${TEST_PACKAGES}"
+	@go test "${PACKAGES}"
 
 test-ci:
 	@docker run \
 	-v "${CURDIR}/..":${PATH_BASE} \
 	-w ${PATH_BASE}/${REPONAME} \
 	--entrypoint=go \
-	${GO_BUILDER_IMAGE} test "${TEST_PACKAGES}" -cover
+	${GO_BUILDER_IMAGE} test "${PACKAGES}" -cover
 
+vet:
+	@go vet "${PACKAGES}"
 
-test-coverage:
-	@echo "No tests yet :("
+vet-ci:
+	@docker run \
+	-it \
+	--rm \
+	-v "${CURDIR}/..":${PATH_BASE} \
+	-w ${PATH_BASE}/${REPONAME} \
+	--entrypoint=go \
+	${GO_BUILDER_IMAGE} vet "${PACKAGES}"

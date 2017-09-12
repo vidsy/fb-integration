@@ -9,7 +9,10 @@ import (
 func TestReactionsBreakdown(t *testing.T) {
 	t.Run(".Increment()", func(t *testing.T) {
 		t.Run("IncrementsValue", func(t *testing.T) {
-			reactionsBreakdown := fbintegration.ReactionsBreakdown{"LIKE", 1}
+			reactionsBreakdown := fbintegration.ReactionsBreakdown{
+				Type:  "LIKE",
+				Value: 1,
+			}
 			reactionsBreakdown.Increment(19)
 
 			if reactionsBreakdown.Value != 20 {

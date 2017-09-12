@@ -29,7 +29,7 @@ type (
 		ReactionsBreakdown                      map[string]float64 `json:"reactions_breakdown"`
 		Result                                  float64            `json:"result"`
 		ResultRate                              float64            `json:"result_rate"`
-		ResultName                              string             `json:"result"`
+		ResultName                              string             `json:"result_name"`
 		SampledPeopleReached                    float64            `json:"-"`
 		Shares                                  float64            `json:"shares"`
 		Spend                                   float64            `json:"spend"`
