@@ -6,9 +6,6 @@ general:
 machine:
   services:
     - docker
-  environment:
-    PATH_BASE: "/go/src/github.com/vidsy"
-    GO_BUILDER_IMAGE: "vidsyhq/go-builder"
 
 dependencies:
   override:
@@ -16,5 +13,7 @@ dependencies:
 
 test:
   override:
+    - make build-ci
     - make test-ci
+    - make vet-ci
     - make check-version

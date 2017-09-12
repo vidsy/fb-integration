@@ -13,10 +13,16 @@ func TestTotalReactionsBreakdown(t *testing.T) {
 			var totalReactionsBreakdown fbintegration.TotalReactionsBreakdown
 
 			totalReactionsBreakdown = append(
-				totalReactionsBreakdown, fbintegration.ReactionsBreakdown{"WOW", 1},
+				totalReactionsBreakdown, fbintegration.ReactionsBreakdown{
+					Type:  "WOW",
+					Value: 1,
+				},
 			)
 			totalReactionsBreakdown = append(
-				totalReactionsBreakdown, fbintegration.ReactionsBreakdown{"WOW", 5},
+				totalReactionsBreakdown, fbintegration.ReactionsBreakdown{
+					Type:  "WOW",
+					Value: 5,
+				},
 			)
 
 			sort.Sort(&totalReactionsBreakdown)
@@ -34,7 +40,10 @@ func TestTotalReactionsBreakdown(t *testing.T) {
 		var totalReactionsBreakdown fbintegration.TotalReactionsBreakdown
 
 		totalReactionsBreakdown = append(
-			totalReactionsBreakdown, fbintegration.ReactionsBreakdown{"WOW", 5},
+			totalReactionsBreakdown, fbintegration.ReactionsBreakdown{
+				Type:  "WOW",
+				Value: 5,
+			},
 		)
 
 		t.Run("WithValidKey", func(t *testing.T) {
@@ -59,7 +68,10 @@ func TestTotalReactionsBreakdown(t *testing.T) {
 	t.Run(".IncrementValueForType()", func(t *testing.T) {
 		var totalReactionsBreakdown fbintegration.TotalReactionsBreakdown
 		totalReactionsBreakdown = append(
-			totalReactionsBreakdown, fbintegration.ReactionsBreakdown{"WOW", 1},
+			totalReactionsBreakdown, fbintegration.ReactionsBreakdown{
+				Type:  "WOW",
+				Value: 1,
+			},
 		)
 
 		totalReactionsBreakdown.IncrementValueForType("WOW", 1)

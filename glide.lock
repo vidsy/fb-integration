@@ -1,10 +1,10 @@
 hash: 24fd018773174f4f508095d88fd1107ab570905cd52b0bdd3729923c715acea6
-updated: 2016-12-01T12:18:49.875951998Z
+updated: 2017-09-12T11:25:39.907223536+01:00
 imports:
 - name: github.com/huandu/facebook
-  version: 24ce8d1913aaad265ff4cb4af6a1d1b1801d3021
+  version: efe962f32209aa6e7430fb779bdf29bbcdb716e1
 - name: github.com/pariz/gountries
-  version: 01a8f4c7c6e404b6529ada4b5e25f00672670f6d
+  version: a6cd50834ce9c3dc62f0487f29b547dcb06a5382
 - name: gopkg.in/yaml.v2
-  version: a5b47d31c556af34a302ce5d659e6fea44d90de0
+  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
 testImports: []
