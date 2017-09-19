@@ -100,7 +100,7 @@ func (ba *BrandAds) FindByObjectID(objectID string) []*Ad {
 	var ads []*Ad
 
 	for i, ad := range ba.Ads {
-		if ad.Post.ObjectID == objectID {
+		if ad.Creative.ObjectID() == objectID {
 			ads = append(ads, &ba.Ads[i])
 		}
 	}
