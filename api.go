@@ -4,7 +4,7 @@ import (
 	facebookLib "github.com/huandu/facebook"
 )
 
-const facebookAPIVersion = "v2.10"
+const facebookAPIVersion = "v2.11"
 
 type (
 	// API comment pending
