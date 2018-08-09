@@ -6,7 +6,7 @@ image_and_working_directory: &image_and_working_directory
 restore_cache: &restore_cache
   restore_cache:
     keys:
-      - dependency-cache-{{ checksum "glide.lock" q}}
+      - dependency-cache-{{ checksum "glide.lock" }}
 
 version: 2
 jobs:
