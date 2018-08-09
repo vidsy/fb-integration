@@ -30,7 +30,7 @@ push-tag:
 	git push origin ${BRANCH} --tags
 
 test:
-	@go test "${PACKAGES}"
+	@go test "${PACKAGES}" -cover
 
 vet:
 	@go vet "${PACKAGES}"
