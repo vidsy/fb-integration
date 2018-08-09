@@ -11,15 +11,6 @@ DEFAULT: test
 build:
 	@go build "${PACKAGES}"
 
-build-ci:
-	@docker run \
-	-it \
-	--rm \
-	-v "${CURDIR}/..":${PATH_BASE} \
-	-w ${PATH_BASE}/${REPONAME} \
-	--entrypoint=go \
-	${GO_BUILDER_IMAGE} build "${PACKAGES}"
-
 check-version:
 	@echo "=> Checking if VERSION exists as Git tag..."
 	(! git rev-list ${VERSION})
@@ -39,23 +30,7 @@ push-tag:
 	git push origin ${BRANCH} --tags
 
 test:
-	@go test "${PACKAGES}"
-
-test-ci:
-	@docker run \
-	-v "${CURDIR}/..":${PATH_BASE} \
-	-w ${PATH_BASE}/${REPONAME} \
-	--entrypoint=go \
-	${GO_BUILDER_IMAGE} test "${PACKAGES}" -cover
+	@go test "${PACKAGES}" -cover
 
 vet:
 	@go vet "${PACKAGES}"
-
-vet-ci:
-	@docker run \
-	-it \
-	--rm \
-	-v "${CURDIR}/..":${PATH_BASE} \
-	-w ${PATH_BASE}/${REPONAME} \
-	--entrypoint=go \
-	${GO_BUILDER_IMAGE} vet "${PACKAGES}"
