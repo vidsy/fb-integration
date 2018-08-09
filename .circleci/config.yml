@@ -47,6 +47,6 @@ workflows:
   commit:
     jobs:
       - build
-      - check-version
+      - check_version
       - test
       - vet
