@@ -1,0 +1,52 @@
+image_and_working_directory: &image_and_working_directory
+  docker:
+    - image: vidsyhq/go-builder:latest
+  working_directory: /go/src/github.com/vidsy/fbintegration
+
+restore_cache: &restore_cache
+  restore_cache:
+    keys:
+      - dependency-cache-{{ checksum "glide.lock" }}
+
+version: 2
+jobs:
+  build:
+    <<: *image_and_working_directory
+    steps:
+      - checkout
+      - *restore_cache
+      - run: glide install
+      - run: BUILD=true /scripts/build.sh
+      - save_cache:
+          key: dependency-cache-{{ checksum "glide.lock" }}
+          paths:
+            - vendor
+
+  check_version:
+    <<: *image_and_working_directory
+    steps:
+      - checkout
+      - run: make check-version
+
+  test:
+    <<: *image_and_working_directory
+    steps:
+      - checkout
+      - *restore_cache
+      - run: make test
+
+  vet:
+    <<: *image_and_working_directory
+    steps:
+      - checkout
+      - *restore_cache
+      - run: make vet
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - build
+      - check_version
+      - test
+      - vet
