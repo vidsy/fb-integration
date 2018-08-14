@@ -4,19 +4,22 @@ import (
 	facebookLib "github.com/huandu/facebook"
 )
 
-const facebookAPIVersion = "v2.11"
+const facebookAPIVersion = "v3.1"
 
 type (
 	// API comment pending
 	API struct {
-		Session     *facebookLib.Session
 		AccessToken string
+		Session     *facebookLib.Session
 	}
 )
 
 // NewAPI comment pending
 func NewAPI() API {
-	api := API{&facebookLib.Session{}, ""}
+	api := API{
+		AccessToken: "",
+		Session:     &facebookLib.Session{},
+	}
 	api.Session.Version = facebookAPIVersion
 	return api
 }
